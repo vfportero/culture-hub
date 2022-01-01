@@ -1,4 +1,6 @@
-# vuejs-firebase-auth-base-dashboard-with-vue-material
+# culture-hub
+![example workflow](https://github.com/vfportero/culture-hub/actions/workflows/firebase-hosting-merge.yml/badge.svg)
+
 
 A basic [Vue.js](https://vuejs.org/) dashboard template integrated with [Firebase Auth](https://firebase.google.com/docs/auth) and build with [Vue Material](https://vuematerial.io/).
 <br>This dashboard has **protected pages** accessible only after user login.
