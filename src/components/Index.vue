@@ -53,21 +53,9 @@ import ToolbarMainLink from './shared/ToolbarMainLink.vue';
 					auth: true,
 				},
 				{
-					icon: 'place',
-					title: 'Ciao',
-					link: '/ciao',
-					auth: true,
-				},
-				{
-					icon: 'map',
-					title: 'Error 404 ;)',
-					link: '/ciao-ciao-error-404',
-					auth: true,
-				},
-				{
-					icon: 'info',
-					title: 'Info',
-					link: '/info',
+					icon: 'add',
+					title: 'New',
+					link: '/new',
 					auth: true,
 				},
 				{

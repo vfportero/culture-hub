@@ -2,9 +2,14 @@ import Vue from 'vue';
 import router from './router';
 
 
-import VueMaterial from 'vue-material'; // TODO: import only needed component, not all
+import VueMaterial from 'vue-material';
+import VueMaterialLocales from '@undecaf/vue-material-locales';
+import es from '@undecaf/vue-material-locales/dist/locale/es'
+
+
 import 'vue-material/dist/vue-material.min.css';
 Vue.use(VueMaterial);
+Vue.use(VueMaterialLocales, [es]);
 
 import VueNoty from 'vuejs-noty';
 Vue.use(VueNoty, {
@@ -26,5 +31,7 @@ FirebaseAuth.onAuthStateChanged(() => { // Mount app only after firebase auth in
 			router,
 			render: h => h(App)
 		}).$mount('#app');
+
+		app.$material.selectLocale('es');
 	}
 });

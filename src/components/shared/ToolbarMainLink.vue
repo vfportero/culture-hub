@@ -11,7 +11,6 @@
     props: {
       to: {
         type: String,
-        required: true,
         default: '/home'
       }
     }

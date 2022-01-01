@@ -10,8 +10,10 @@ import AccountInfo from "../components/account/AccountInfo";
 import AccountLogin from "../components/account/Login";
 
 import Home from "../components/Home";
-import Ciao from "../components/Ciao";
-import Info from "../components/Info";
+import NewLogEntry from "../components/new/NewLogEntry";
+import NewMovieLogEntry from "../components/new/NewMovieLogEntry";
+import NewTvshowLogEntry from "../components/new/NewTvshowLogEntry";
+
 
 
 const router = new VueRouter ({
@@ -36,14 +38,21 @@ const router = new VueRouter ({
 					component: Home,
 				},
 				{
-					path: 'ciao',
-					name: 'ciao',
-					component: Ciao,
-				},
-				{
-					path: 'info',
-					name: 'info',
-					component: Info,
+					path: 'new',
+					name: 'new',
+					component: NewLogEntry,
+					children: [
+						{
+							path: 'movie',
+							name: 'NewMovieLogEntry',
+							component: NewMovieLogEntry,
+						},
+						{
+							path: 'tvshow',
+							name: 'newTvshow',
+							component: NewTvshowLogEntry,
+						}
+					]
 				},
 			]
 		},

@@ -2,6 +2,10 @@
 	<div>
 		<h1>Home</h1>
 
+		<md-button class="md-fab md-primary" to="/new/movie">
+			<md-icon>add</md-icon>
+		</md-button>
+
 		<div class="section">
 			<md-button class="md-raised">Default</md-button>
 			<md-button class="md-raised" :md-ripple="false">Ripple Off</md-button>
@@ -188,6 +192,11 @@
 </script>
 
 <style scoped>
+	.md-fab {
+		position: fixed;
+		bottom: 16px;
+		right: 16px;
+	}
 	.md-field {
 		max-width: 500px;
 	}
