@@ -2,10 +2,7 @@
 	<div id="error-404-container">
 		<md-app md-waterfall md-mode="fixed" :md-theme="userTheme">
 			<md-app-toolbar class="md-primary" md-elevation="5">
-				<router-link class="router-link" to="/">
-					<img class="bar-logo" src="../assets/logo.png" alt="Logo"/>
-					<span class="md-title">Vue.js Dashboard with Firebase</span>
-				</router-link>
+				<toolbar-main-link :to="'/'"></toolbar-main-link>
 			</md-app-toolbar>
 
 			<md-app-content>
@@ -19,7 +16,9 @@
 </template>
 
 <script>
+import ToolbarMainLink from './shared/ToolbarMainLink.vue';
 	export default {
+		components: { ToolbarMainLink },
 		name: "Error404",
 		data: () => ({
 			userTheme: "default",

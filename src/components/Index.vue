@@ -5,10 +5,7 @@
 				<md-button class="md-icon-button" @click="toggleMenu" v-if="!menuVisible">
 					<md-icon>menu</md-icon>
 				</md-button>
-				<router-link class="router-link" to="/home">
-					<img class="bar-logo" src="../assets/logo.png" alt="Logo"/>
-					<span class="md-title">Vue.js Dashboard with Firebase</span>
-				</router-link>
+				<toolbar-main-link></toolbar-main-link>
 			</md-app-toolbar>
 
 			<md-app-drawer :md-active.sync="menuVisible" md-persistent="mini">
@@ -41,7 +38,9 @@
 </template>
 
 <script>
+import ToolbarMainLink from './shared/ToolbarMainLink.vue';
 	export default {
+		components: { ToolbarMainLink },
 		name: 'Index',
 		data: () => ({
 			menuVisible: false,
