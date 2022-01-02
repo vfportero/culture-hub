@@ -11,6 +11,7 @@
     "@undecaf/vue-material-locales": "^0.2.1",
     "core-js": "^3.6.4",
     "firebase": "^7.14.2",
+    "prettier": "^2.5.1",
     "vue": "^2.6.11",
     "vue-material": "^1.0.0-beta-12",
     "vue-rate-it": "^2.1.0",
@@ -43,7 +44,26 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "indent": [
+        "error",
+        "tab"
+      ],
+      "semi": [
+        "error",
+        "always"
+      ],
+      "quotes": [
+        "error",
+        "single"
+      ]
+    }
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true
   },
   "browserslist": [
     "> 1%",

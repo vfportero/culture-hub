@@ -17,18 +17,18 @@
 
 <script>
 import ToolbarMainLink from './shared/ToolbarMainLink.vue';
-	export default {
-		components: { ToolbarMainLink },
-		name: "Error404",
-		data: () => ({
-			userTheme: "default",
-		}),
-		mounted() {
-			if (localStorage.userTheme === "dark") {
-				this.userTheme = "dark";
-			}
+export default {
+	components: { ToolbarMainLink },
+	name: 'Error404',
+	data: () => ({
+		userTheme: 'default',
+	}),
+	mounted() {
+		if (localStorage.userTheme === 'dark') {
+			this.userTheme = 'dark';
 		}
 	}
+};
 </script>
 
 <style lang="scss">

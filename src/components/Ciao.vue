@@ -10,9 +10,9 @@
 </template>
 
 <script>
-	export default {
-		name: "Ciao"
-	}
+export default {
+	name: 'Ciao'
+};
 </script>
 
 <style scoped>

@@ -5,11 +5,11 @@
 </template>
 
 <script>
-import NewLogEntryTabs from './NewLogEntryTabs.vue'
-  export default {
-  components: { NewLogEntryTabs },
-    name: 'NewLogEntry',
-  }
+import NewLogEntryTabs from './NewLogEntryTabs.vue';
+export default {
+	components: { NewLogEntryTabs },
+	name: 'NewLogEntry',
+};
 </script>
 
 <style lang="scss" scoped>

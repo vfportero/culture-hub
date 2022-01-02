@@ -31,19 +31,19 @@
 </template>
 
 <script>
-	export default {
-		name: "Home",
-		data: () => ({
-		}),
-		computed: {
-			logEntries() {
-				return this.$store.state.logEntries;
-			},
-			loading() {
-        return this.$store.state.loading;
-      },
+export default {
+	name: 'Home',
+	data: () => ({
+	}),
+	computed: {
+		logEntries() {
+			return this.$store.state.logEntries;
 		},
-	}
+		loading() {
+			return this.$store.state.loading;
+		},
+	},
+};
 </script>
 
 <style scoped>

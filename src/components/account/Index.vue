@@ -17,22 +17,22 @@
 
 <script>
 import ToolbarMainLink from '../shared/ToolbarMainLink.vue';
-	export default {
-		components: { ToolbarMainLink },
-		name: "AccountIndex",
-		data: () => ({
-			userTheme: "default",
-		}),
-		mounted() {
-			this.themeChanged();
-		},
-		methods: {
-			themeChanged: function () {
-				if (localStorage.userTheme === "dark") this.userTheme = "dark";
-				else this.userTheme = "default";
-			}
+export default {
+	components: { ToolbarMainLink },
+	name: 'AccountIndex',
+	data: () => ({
+		userTheme: 'default',
+	}),
+	mounted() {
+		this.themeChanged();
+	},
+	methods: {
+		themeChanged: function () {
+			if (localStorage.userTheme === 'dark') this.userTheme = 'dark';
+			else this.userTheme = 'default';
 		}
 	}
+};
 </script>
 
 <style lang="scss">

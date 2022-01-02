@@ -42,53 +42,53 @@
 
 <script>
 import ToolbarMainLink from './shared/ToolbarMainLink.vue';
-	export default {
-		components: { ToolbarMainLink },
-		name: 'Index',
-		data: () => ({
-			menuVisible: false,
-			userTheme: "default",
-			menuTab: [
-				{
-					icon: 'home',
-					title: 'Home',
-					link: '/home',
-					auth: true,
-				},
-				{
-					icon: 'add',
-					title: 'New',
-					link: '/new',
-					auth: true,
-				},
-				{
-					icon: 'person',
-					title: 'Account',
-					link: '/account',
-					auth: true,
-				}
-			]
-		}),
-		mounted() {
-			if (localStorage.userTheme === "dark") {
-				this.userTheme = "dark";
+export default {
+	components: { ToolbarMainLink },
+	name: 'Index',
+	data: () => ({
+		menuVisible: false,
+		userTheme: 'default',
+		menuTab: [
+			{
+				icon: 'home',
+				title: 'Home',
+				link: '/home',
+				auth: true,
+			},
+			{
+				icon: 'add',
+				title: 'New',
+				link: '/new',
+				auth: true,
+			},
+			{
+				icon: 'person',
+				title: 'Account',
+				link: '/account',
+				auth: true,
 			}
-			if (this.$route.fullPath === '/') {
-				this.$router.replace('/home').catch(() => {
-				});
-			}
-		},
-		computed:{
-			userName() {
-				return this.$store.getters.userName;
-			}
-		},
-		methods: {
-			toggleMenu() {
-				this.menuVisible = !this.menuVisible;
-			}
+		]
+	}),
+	mounted() {
+		if (localStorage.userTheme === 'dark') {
+			this.userTheme = 'dark';
+		}
+		if (this.$route.fullPath === '/') {
+			this.$router.replace('/home').catch(() => {
+			});
+		}
+	},
+	computed:{
+		userName() {
+			return this.$store.getters.userName;
+		}
+	},
+	methods: {
+		toggleMenu() {
+			this.menuVisible = !this.menuVisible;
 		}
 	}
+};
 </script>
 
 <style lang="scss">

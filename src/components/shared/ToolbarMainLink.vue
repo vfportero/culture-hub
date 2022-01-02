@@ -6,15 +6,15 @@
 </template>
 
 <script>
-	export default {
-		name: "ToolbarMainLink",
-    props: {
-      to: {
-        type: String,
-        default: '/home'
-      }
-    }
+export default {
+	name: 'ToolbarMainLink',
+	props: {
+		to: {
+			type: String,
+			default: '/home'
+		}
 	}
+};
 </script>
 
 <style scoped>

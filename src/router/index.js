@@ -3,16 +3,16 @@ import VueRouter  from 'vue-router';
 import {FirebaseAuth} from '../firebase';
 Vue.use(VueRouter);
 
-import Index from "../components/Index";
-import Error404 from "../components/Error404";
-import AccountIndex from "../components/account/Index";
-import AccountInfo from "../components/account/AccountInfo";
-import AccountLogin from "../components/account/Login";
+import Index from '../components/Index';
+import Error404 from '../components/Error404';
+import AccountIndex from '../components/account/Index';
+import AccountInfo from '../components/account/AccountInfo';
+import AccountLogin from '../components/account/Login';
 
-import Home from "../components/Home";
-import NewLogEntry from "../components/new/NewLogEntry";
-import NewMovieLogEntry from "../components/new/NewMovieLogEntry";
-import NewTvshowLogEntry from "../components/new/NewTvshowLogEntry";
+import Home from '../components/Home';
+import NewLogEntry from '../components/new/NewLogEntry';
+import NewMovieLogEntry from '../components/new/NewMovieLogEntry';
+import NewTvshowLogEntry from '../components/new/NewTvshowLogEntry';
 
 
 
@@ -81,6 +81,6 @@ router.beforeEach((to, from, next) => {
 
 	if(requiresAuth && !currentUser) next('/account/login');
 	else next();
-})
+});
 
 export default router;

@@ -14,52 +14,52 @@
 </template>
 
 <script>
-	import { FirebaseAuth } from '@/firebase';
+import { FirebaseAuth } from '@/firebase';
 
-	export default {
-		name: 'AccountInfo',
-		data() {
-			return {
-				loading: true,
-				email: '',
-				themeSwitch: false, // false = 'default'; true = 'dark'
-			}
+export default {
+	name: 'AccountInfo',
+	data() {
+		return {
+			loading: true,
+			email: '',
+			themeSwitch: false, // false = 'default'; true = 'dark'
+		};
+	},
+	mounted() {
+		if (localStorage.userTheme === 'dark') {
+			this.themeSwitch = true;
+		}
+		let _this = this;
+		FirebaseAuth.onAuthStateChanged((user) => {
+			if (user) {
+				_this.email = user.email;
+				_this.loading = false;
+			} else this.$router.replace('/account/login').catch(() => {
+			}); // User not logged
+		});
+	},
+	methods: {
+		changeTheme: function () {
+			if (this.themeSwitch) localStorage.userTheme = 'dark';
+			else localStorage.userTheme = 'light';
+			this.$emit('themeChanged');
 		},
-		mounted() {
-			if (localStorage.userTheme === 'dark') {
-				this.themeSwitch = true;
-			}
+		logout: function () {
+			this.loading = true;
 			let _this = this;
-			FirebaseAuth.onAuthStateChanged((user) => {
-				if (user) {
-					_this.email = user.email;
-					_this.loading = false;
-				} else this.$router.replace('/account/login').catch(() => {
-				}); // User not logged
-			});
-		},
-		methods: {
-			changeTheme: function () {
-				if (this.themeSwitch) localStorage.userTheme = 'dark';
-				else localStorage.userTheme = 'light';
-				this.$emit('themeChanged');
-			},
-			logout: function () {
-				this.loading = true;
-				let _this = this;
-				FirebaseAuth.signOut().then(() => {
-					// Automatic redirect to login (onAuthStateChanged)
-					_this.$noty.success('Logout confirmed', {
-						killer: true,
-						timeout: 1500,
-					});
-				}).catch((error) => {
-					console.log('signOut()', error);
-					_this.$noty.error('Logout error, please refresh the page.');
+			FirebaseAuth.signOut().then(() => {
+				// Automatic redirect to login (onAuthStateChanged)
+				_this.$noty.success('Logout confirmed', {
+					killer: true,
+					timeout: 1500,
 				});
-			}
+			}).catch((error) => {
+				console.log('signOut()', error);
+				_this.$noty.error('Logout error, please refresh the page.');
+			});
 		}
 	}
+};
 </script>
 
 <style lang="scss">

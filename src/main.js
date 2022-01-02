@@ -6,7 +6,7 @@ import es from '@undecaf/vue-material-locales/dist/locale/es';
 import 'vue-material/dist/vue-material.min.css';
 import VueNoty from 'vuejs-noty';
 import App from './App.vue';
-import { FirebaseAuth } from "@/firebase";
+import { FirebaseAuth } from '@/firebase';
 import store from './store';
 
 Vue.use(VueMaterial);

@@ -10,12 +10,12 @@
 </template>
 
 <script>
-import NewMovieLogEntry from './NewMovieLogEntry.vue'
-import NewTvshowLogEntry from './NewTvshowLogEntry.vue'
-	export default {
-  components: { NewMovieLogEntry, NewTvshowLogEntry },
-		name: "NewLogEntryTabs",
-	}
+import NewMovieLogEntry from './NewMovieLogEntry.vue';
+import NewTvshowLogEntry from './NewTvshowLogEntry.vue';
+export default {
+	components: { NewMovieLogEntry, NewTvshowLogEntry },
+	name: 'NewLogEntryTabs',
+};
 </script>
 
 <style scoped>

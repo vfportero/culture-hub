@@ -11,4 +11,4 @@ const FirebaseDatabase = firebase.firestore();
 export {
 	FirebaseAuth,
 	FirebaseDatabase
-}
+};
