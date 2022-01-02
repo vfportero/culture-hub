@@ -31,7 +31,7 @@ export default class AccountIndex extends Vue {
   
   mounted() {
     this.themeChanged();
-  };
+  }
 
   
   themeChanged() {

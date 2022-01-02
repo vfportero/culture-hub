@@ -58,7 +58,7 @@ export default class AccountLogin extends Vue {
     }
   }
   
-};
+}
 </script>
 
 <style lang="scss">
