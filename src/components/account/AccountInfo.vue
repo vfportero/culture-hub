@@ -14,19 +14,19 @@
 </template>
 
 <script>
-	import {FirebaseAuth} from "@/firebase";
+	import { FirebaseAuth } from '@/firebase';
 
 	export default {
-		name: "AccountInfo",
+		name: 'AccountInfo',
 		data() {
 			return {
 				loading: true,
-				email: "",
+				email: '',
 				themeSwitch: false, // false = 'default'; true = 'dark'
 			}
 		},
 		mounted() {
-			if (localStorage.userTheme === "dark") {
+			if (localStorage.userTheme === 'dark') {
 				this.themeSwitch = true;
 			}
 			let _this = this;
@@ -40,8 +40,8 @@
 		},
 		methods: {
 			changeTheme: function () {
-				if (this.themeSwitch) localStorage.userTheme = "dark";
-				else localStorage.userTheme = "light";
+				if (this.themeSwitch) localStorage.userTheme = 'dark';
+				else localStorage.userTheme = 'light';
 				this.$emit('themeChanged');
 			},
 			logout: function () {
@@ -49,13 +49,13 @@
 				let _this = this;
 				FirebaseAuth.signOut().then(() => {
 					// Automatic redirect to login (onAuthStateChanged)
-					_this.$noty.success("Logout confirmed", {
+					_this.$noty.success('Logout confirmed', {
 						killer: true,
 						timeout: 1500,
 					});
 				}).catch((error) => {
-					console.log("signOut()", error);
-					_this.$noty.error("Logout error, please refresh the page.");
+					console.log('signOut()', error);
+					_this.$noty.error('Logout error, please refresh the page.');
 				});
 			}
 		}

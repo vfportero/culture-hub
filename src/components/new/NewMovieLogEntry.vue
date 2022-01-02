@@ -21,7 +21,10 @@
                   :increment="0.5" 
                   v-model="form.rating">
                 </star-rating>
-                <span class="md-error" v-if="!$v.form.rating.required">Requerido</span>              </md-field>
+                <span class="md-error" v-if="!$v.form.rating.required">Requerido</span>             
+                <span class="md-error" v-if="!$v.form.rating.minValue">La nota mínima es 0.5⭐</span>     
+                <span class="md-error" v-if="!$v.form.rating.maxValue">La nota máxima es 5⭐</span> 
+              </md-field>
             </div>
           </div>
           <div class="md-layout md-gutter">
@@ -37,7 +40,6 @@
               <md-field :class="getValidationClass('platform')">
                 <label for="platform">Plataforma</label>
                 <md-select name="platform" id="platform" v-model="form.platform" md-dense :disabled="sending">
-                  <md-option></md-option>
                   <md-optgroup label="Streaming">
                     <md-option value="netflix">Netflix</md-option>
                     <md-option value="disney_plus">Disney+</md-option>
@@ -75,17 +77,20 @@
         <md-card-actions>
           <md-button type="submit" class="md-primary" :disabled="sending">Añadir</md-button>
         </md-card-actions>
-      </md-card>
 
-      <md-snackbar :md-active.sync="userSaved">¡El registro para {{ form.name }} se ha creado correctamente!</md-snackbar>
+        <md-snackbar :md-active.sync="logEntryError">{{logEntryError}}</md-snackbar>
+      </md-card>
     </form>
   </div>
 </template>
 
 <script>
   import { validationMixin } from 'vuelidate';
+
   import {
-    required
+    required,
+    minValue,
+    maxValue
   } from 'vuelidate/lib/validators';
   import { StarRating } from 'vue-rate-it';
 
@@ -104,17 +109,22 @@
         review: null,
         date: new Date()
       },
-      userSaved: false,
-      sending: false,
-      lastUser: null
+      logEntryError: null
     }),
+    computed: {
+      sending() {
+        return this.$store.state.loading;
+      },
+    },
     validations: {
       form: {
         name: {
           required
         },
         rating: {
-          required
+          required,
+          minValue: minValue(0.5),
+          maxValue: maxValue(5)
         },
         platform: {
           required
@@ -132,7 +142,7 @@
         return date > new Date();
       },
       getValidationClass (fieldName) {
-        const field = this.$v.form[fieldName]
+        const field = this.$v.form[fieldName];
 
         if (field) {
           return {
@@ -141,29 +151,29 @@
         }
       },
       clearForm () {
-        this.$v.$reset()
-        this.form.name = null
-        this.form.rating = null
-        this.form.platform = null
+        this.$v.$reset();
+        this.form.name = null;
+        this.form.rating = null;
+        this.form.platform = null;
         this.form.date = null;
         this.form.review = null;
+        this.logEntryError = null;
       },
-      save () {
-        this.sending = true
-
-        // Instead of this timeout, here you can call your API
-        window.setTimeout(() => {
-          this.lastUser = `${this.form.name} ${this.form.lastName}`
-          this.userSaved = true
-          this.sending = false
-          this.clearForm()
-        }, 1500)
+      async save () {
+        const result = await this.$store.dispatch('addUserLogEntry', this.form);
+        if (result === true) {
+          this.clearForm();
+          this.$router.push('/home');
+        } else {
+          this.logEntryError = result;
+        }
+        
       },
       validate () {
         this.$v.$touch()
 
         if (!this.$v.$invalid) {
-          this.save()
+          this.save();
         }
       }
     }

@@ -42,6 +42,11 @@
 					let _this = this;
 					FirebaseAuth.signInWithEmailAndPassword(this.email, this.password).then(() => {
 						this.password = "";
+						this.$store.dispatch('setUser', {
+							uid: FirebaseAuth.currentUser.uid,
+							email: FirebaseAuth.currentUser.email,
+							displayName: FirebaseAuth.currentUser.displayName,
+						});
 						this.$router.replace('/home'); // User logged
 					}).catch((error) => {
 						if (error.code === 'auth/wrong-password') {

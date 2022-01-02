@@ -6,6 +6,9 @@
 					<md-icon>menu</md-icon>
 				</md-button>
 				<toolbar-main-link></toolbar-main-link>
+				<div class="md-toolbar-section-end">
+					Hola {{userName}}
+				</div>
 			</md-app-toolbar>
 
 			<md-app-drawer :md-active.sync="menuVisible" md-persistent="mini">
@@ -73,6 +76,11 @@ import ToolbarMainLink from './shared/ToolbarMainLink.vue';
 			if (this.$route.fullPath === '/') {
 				this.$router.replace('/home').catch(() => {
 				});
+			}
+		},
+		computed:{
+			userName() {
+				return this.$store.getters.userName;
 			}
 		},
 		methods: {
