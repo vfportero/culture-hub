@@ -8,37 +8,39 @@ import VueNoty from 'vuejs-noty';
 import App from './App.vue';
 import { FirebaseAuth } from '@/firebase';
 import store from './store';
+import UserLogEntriesStore from './store/modules/userLogEntries';
 
 Vue.use(VueMaterial);
 Vue.use(VueMaterialLocales, [es]);
 Vue.use(VueNoty, {
-	timeout: 4000,
-	progressBar: true,
-	layout: 'topRight'
+  timeout: 4000,
+  progressBar: true,
+  layout: 'topRight'
 });
 
 
-let app = null;
+let app;
 Vue.config.productionTip = false;
 
 
 
 FirebaseAuth.onAuthStateChanged((user) => { // Mount app only after firebase auth initialized
-	if (!app) {
-		app = new Vue({
-			router,
-			store,
-			render: h => h(App)
-		}).$mount('#app');
+  
+  if (!app) {
+    app = new Vue({
+      router,
+      store,
+      render: h => h(App)
+    }).$mount('#app');
 
-		app.$material.selectLocale('es');
+    app.$material.selectLocale('es');
 
-		if (user) {
-			store.dispatch('setUser', {
-				uid: user.uid,
-				email: user.email,
-				displayName: user.displayName,
-			});
-		}
-	}
+    if (user) {
+      UserLogEntriesStore.userLogged({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+      });
+    }
+  }
 });

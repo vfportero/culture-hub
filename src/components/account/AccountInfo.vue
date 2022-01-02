@@ -13,53 +13,45 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import { FirebaseAuth } from '@/firebase';
+import Vue from 'vue';
+import Component from 'vue-class-component';
 
-export default {
-	name: 'AccountInfo',
-	data() {
-		return {
-			loading: true,
-			email: '',
-			themeSwitch: false, // false = 'default'; true = 'dark'
-		};
-	},
-	mounted() {
-		if (localStorage.userTheme === 'dark') {
-			this.themeSwitch = true;
-		}
-		let _this = this;
-		FirebaseAuth.onAuthStateChanged((user) => {
-			if (user) {
-				_this.email = user.email;
-				_this.loading = false;
-			} else this.$router.replace('/account/login').catch(() => {
-			}); // User not logged
-		});
-	},
-	methods: {
-		changeTheme: function () {
-			if (this.themeSwitch) localStorage.userTheme = 'dark';
-			else localStorage.userTheme = 'light';
-			this.$emit('themeChanged');
-		},
-		logout: function () {
-			this.loading = true;
-			let _this = this;
-			FirebaseAuth.signOut().then(() => {
-				// Automatic redirect to login (onAuthStateChanged)
-				_this.$noty.success('Logout confirmed', {
-					killer: true,
-					timeout: 1500,
-				});
-			}).catch((error) => {
-				console.log('signOut()', error);
-				_this.$noty.error('Logout error, please refresh the page.');
-			});
-		}
-	}
-};
+@Component({
+})
+export default class AccountInfo extends Vue {
+
+  loading = true;
+  email = '';
+  themeSwitch=  false; // false = 'default'; true = 'dark'
+
+  mounted() {
+    if (localStorage.userTheme === 'dark') {
+      this.themeSwitch = true;
+    }
+    FirebaseAuth.onAuthStateChanged((user) => {
+      if (user) {
+        this.email = user.email;
+        this.loading = false;
+      } else this.$router.replace('/account/login').catch(() => {
+      }); // User not logged
+    });
+  }
+
+
+  changeTheme() {
+    if (this.themeSwitch) localStorage.userTheme = 'dark';
+    else localStorage.userTheme = 'light';
+    this.$emit('themeChanged');
+  }
+
+  logout() {
+    this.loading = true;
+    FirebaseAuth.signOut();
+  }
+  
+}
 </script>
 
 <style lang="scss">

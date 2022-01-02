@@ -15,24 +15,31 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import ToolbarMainLink from '../shared/ToolbarMainLink.vue';
-export default {
-	components: { ToolbarMainLink },
-	name: 'AccountIndex',
-	data: () => ({
-		userTheme: 'default',
-	}),
-	mounted() {
-		this.themeChanged();
-	},
-	methods: {
-		themeChanged: function () {
-			if (localStorage.userTheme === 'dark') this.userTheme = 'dark';
-			else this.userTheme = 'default';
-		}
-	}
-};
+import Vue from 'vue';
+import Component from 'vue-class-component';
+
+@Component({
+  components: {
+    ToolbarMainLink,
+  },
+})
+export default class AccountIndex extends Vue {
+  
+  userTheme = 'default';
+  
+  mounted() {
+    this.themeChanged();
+  };
+
+  
+  themeChanged() {
+    if (localStorage.userTheme === 'dark') this.userTheme = 'dark';
+    else this.userTheme = 'default';
+  }
+  
+}
 </script>
 
 <style lang="scss">

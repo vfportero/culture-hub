@@ -4,17 +4,16 @@
         <new-movie-log-entry></new-movie-log-entry>
       </md-tab>
       <md-tab id="tab-tvshow" md-label="Serie" md-icon="live_tv" to="/new/tvshow" exact>
-        <new-tvshow-log-entry></new-tvshow-log-entry>
+        TODO
       </md-tab>
   </md-tabs>
 </template>
 
-<script>
+<script lang="ts">
 import NewMovieLogEntry from './NewMovieLogEntry.vue';
-import NewTvshowLogEntry from './NewTvshowLogEntry.vue';
 export default {
-	components: { NewMovieLogEntry, NewTvshowLogEntry },
-	name: 'NewLogEntryTabs',
+  components: { NewMovieLogEntry },
+  name: 'NewLogEntryTabs',
 };
 </script>
 

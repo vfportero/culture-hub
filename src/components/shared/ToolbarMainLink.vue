@@ -5,15 +5,15 @@
   </router-link>
 </template>
 
-<script>
+<script lang="ts">
 export default {
-	name: 'ToolbarMainLink',
-	props: {
-		to: {
-			type: String,
-			default: '/home'
-		}
-	}
+  name: 'ToolbarMainLink',
+  props: {
+    to: {
+      type: String,
+      default: '/home'
+    }
+  }
 };
 </script>
 

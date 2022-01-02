@@ -16,48 +16,48 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import {FirebaseAuth} from '@/firebase';
+import UserLogEntriesStore from '@/store/modules/userLogEntries';
+import Vue from 'vue';
+import Component from 'vue-class-component';
 
-export default {
-	name: 'AccountLogin',
-	data() {
-		return {
-			email: '',
-			password: '',
-			errorMessage: ''
-		};
-	},
-	mounted() {
-		FirebaseAuth.onAuthStateChanged((user) => {
-			if (user && this.email === '') this.$router.replace('/account').catch(() => {
-			}); // User already logged
-		});
-	},
-	methods: {
-		login: function () {
-			if (this.email.length < 6 || this.password.length < 4) {
-				this.errorMessage = 'Insert email and password';
-			} else {
-				let _this = this;
-				FirebaseAuth.signInWithEmailAndPassword(this.email, this.password).then(() => {
-					this.password = '';
-					this.$store.dispatch('setUser', {
-						uid: FirebaseAuth.currentUser.uid,
-						email: FirebaseAuth.currentUser.email,
-						displayName: FirebaseAuth.currentUser.displayName,
-					});
-					this.$router.replace('/home'); // User logged
-				}).catch((error) => {
-					if (error.code === 'auth/wrong-password') {
-						_this.errorMessage = 'Password wrong';
-					} else {
-						_this.errorMessage = 'Check email and password';
-					}
-				});
-			}
-		}
-	}
+@Component
+export default class AccountLogin extends Vue {
+  email = '';
+  password = '';
+  errorMessage = '';
+
+  mounted() {
+    FirebaseAuth.onAuthStateChanged((user) => {
+      if (user && this.email === '') this.$router.replace('/account').catch(() => {
+      }); // User already logged
+    });
+  }
+  
+  
+  login() {
+    if (this.email.length < 6 || this.password.length < 4) {
+      this.errorMessage = 'Insert email and password';
+    } else {
+      FirebaseAuth.signInWithEmailAndPassword(this.email, this.password).then(() => {
+        this.password = '';
+        UserLogEntriesStore.userLogged({
+          uid: FirebaseAuth.currentUser.uid,
+          email: FirebaseAuth.currentUser.email,
+          displayName: FirebaseAuth.currentUser.displayName,
+        });
+        this.$router.replace('/home'); // User logged
+      }).catch((error) => {
+        if (error.code === 'auth/wrong-password') {
+          this.errorMessage = 'Password wrong';
+        } else {
+          this.errorMessage = 'Check email and password';
+        }
+      });
+    }
+  }
+  
 };
 </script>
 

@@ -30,20 +30,22 @@
 	</div>
 </template>
 
-<script>
-export default {
-	name: 'Home',
-	data: () => ({
-	}),
-	computed: {
-		logEntries() {
-			return this.$store.state.logEntries;
-		},
-		loading() {
-			return this.$store.state.loading;
-		},
-	},
-};
+<script lang="ts">
+import UserLogEntriesStore from '@/store/modules/userLogEntries';
+import Vue from 'vue';
+import Component from 'vue-class-component';
+
+@Component
+export default class Home extends Vue {
+  
+  get logEntries() {
+    return UserLogEntriesStore.logEntries;
+  }
+
+  get	loading() {
+    return UserLogEntriesStore.loading;
+  }
+}
 </script>
 
 <style scoped>

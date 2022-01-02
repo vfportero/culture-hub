@@ -4,11 +4,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import NewLogEntryTabs from './NewLogEntryTabs.vue';
 export default {
-	components: { NewLogEntryTabs },
-	name: 'NewLogEntry',
+  components: { NewLogEntryTabs },
+  name: 'NewLogEntry',
 };
 </script>
 

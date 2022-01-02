@@ -84,100 +84,117 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { validationMixin } from 'vuelidate';
-
+import UserLogEntriesStore from '@/store/modules/userLogEntries';
 import {
-	required,
-	minValue,
-	maxValue
+  required,
+  minValue,
+  maxValue
 } from 'vuelidate/lib/validators';
 import { StarRating } from 'vue-rate-it';
+import { LogEntryType } from '@/models';
+import Vue from 'vue';
+import Component from 'vue-class-component';
 
-export default {
-	name: 'NewMovieLogEntry',
-	components: {
-		StarRating
-	},
-	mixins:
-        [validationMixin],
-	data: () => ({
-		form: {
-			name: null,
-			platform: null,
-			rating: null,
-			review: null,
-			date: new Date()
-		},
-		logEntryError: null
-	}),
-	computed: {
-		sending() {
-			return this.$store.state.loading;
-		},
-	},
-	validations: {
-		form: {
-			name: {
-				required
-			},
-			rating: {
-				required,
-				minValue: minValue(0.5),
-				maxValue: maxValue(5)
-			},
-			platform: {
-				required
-			},
-			date: {
-				required
-			},
-			review: {
-				required
-			}
-		}
-	},
-	methods: {
-		disabledDates: date => {
-			return date > new Date();
-		},
-		getValidationClass (fieldName) {
-			const field = this.$v.form[fieldName];
+@Component({
+  mixins: [validationMixin],
+  validations: {
+    form: {
+      name: {
+        required
+      },
+      rating: {
+        required,
+        minValue: minValue(0.5),
+        maxValue: maxValue(5)
+      },
+      platform: {
+        required
+      },
+      date: {
+        required
+      },
+      review: {
+        required
+      }
+    }
+  },
+  components: {
+    StarRating
+  },
+})
+export default class NewMovieLogEntry extends Vue{
 
-			if (field) {
-				return {
-					'md-invalid': field.$invalid && field.$dirty
-				};
-			}
-		},
-		clearForm () {
-			this.$v.$reset();
-			this.form.name = null;
-			this.form.rating = null;
-			this.form.platform = null;
-			this.form.date = null;
-			this.form.review = null;
-			this.logEntryError = null;
-		},
-		async save () {
-			const result = await this.$store.dispatch('addUserLogEntry', this.form);
-			if (result === true) {
-				this.clearForm();
-				this.$router.push('/home');
-			} else {
-				this.logEntryError = result;
-			}
+  form = {
+    name: null,
+    platform: null,
+    rating: null,
+    review: null,
+    date: new Date()
+  };
+  logEntryError: string = null;
+
+  
+  get sending() {
+    return UserLogEntriesStore.loading;
+  }
+  
+
+  disabledDates(date: Date) {
+    return date > new Date();
+  }
+
+  getValidationClass(fieldName) {
+    const field = this.$v.form[fieldName];
+
+    if (field) {
+      return {
+        'md-invalid': field.$invalid && field.$dirty
+      };
+    }
+  }
+
+  clearForm () {
+    this.$v.$reset();
+    this.form.name = null;
+    this.form.rating = null;
+    this.form.platform = null;
+    this.form.date = null;
+    this.form.review = null;
+    this.logEntryError = null;
+  }
+
+  async save () {
+    const result = await UserLogEntriesStore.createNewUserLogEntry({
+      name: this.form.name,
+      platform: this.form.platform,
+      rating: this.form.rating,
+      review: this.form.review,
+      date: this.form.date,
+      createdDate: new Date(),
+      updatedDate: new Date(),
+      type: LogEntryType.Movie
+    });
+
+    if (result === true) {
+      this.clearForm();
+      this.$router.push('/home');
+    } else {
+      this.logEntryError = result.toString();
+    }
         
-		},
-		validate () {
-			this.$v.$touch();
+  }
 
-			if (!this.$v.$invalid) {
-				this.save();
-			}
-		}
-	}
-};
+  validate () {
+    this.$v.$touch();
+
+    if (!this.$v.$invalid) {
+      this.save();
+    }
+    
+  }
+}
 </script>
 
 <style lang="scss" scoped>
