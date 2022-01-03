@@ -1,6 +1,6 @@
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
 import store from '@/store';
-import { LogEntry, User } from '@/models';
+import { LogEntry, LogEntryType, User } from '@/models';
 import { FirebaseDatabase } from '@/firebase';
 
 @Module({
@@ -29,22 +29,42 @@ class UserLogEntriesStore extends VuexModule {
     if (this.user) {
       this.context.commit('setLoading', true);
       const userLogEntries = await FirebaseDatabase.collection('user_log_entries').doc(this.user.uid).collection('log_entries').get();
-      this.context.commit('setUserLogEntries', await userLogEntries.docs.map(doc => doc.data()));
+      const mappedEntries = await userLogEntries.docs.map(doc => {
+        const docData = doc.data();
+        const entry = {
+          ...docData,
+          uid: doc.id,
+          date: new Date(docData.date.seconds * 1000),
+          createdDate: new Date(docData.createdDate.seconds * 1000),
+          updatedDate: new Date(docData.updatedDate.seconds * 1000),
+        };
+        return entry;
+      });
+      this.context.commit('setUserLogEntries', mappedEntries);
       this.context.commit('setLoading', false);
     }
   }
 
   @Action
-  async createNewUserLogEntry(logEntry: LogEntry): Promise<boolean | string> {
-    const newLogEntry = {
-      ...logEntry,
-      created_date: new Date()
+  async createNewUserLogEntry(payload: { date: Date, type: LogEntryType, name: string, platform: string, rating: number, review: string, images: string[], externalId: string }): Promise<boolean | string> {
+    const now = new Date();
+    const newLogEntry: LogEntry = {
+      createdDate: now,
+      updatedDate: now,
+      date: payload.date,
+      type: payload.type,
+      name: payload.name,
+      platform: payload.platform,
+      rating: payload.rating,
+      review: payload.review,
+      images: payload.images,
+      externalId: payload.externalId
     };
     this.context.commit('setLoading', true);
     try {
       const userLogEntries = await FirebaseDatabase.collection('user_log_entries').doc(this.user.uid).collection('log_entries');
-      
-      await userLogEntries.add(newLogEntry);
+      const newEntry = await userLogEntries.add(newLogEntry);
+      newLogEntry.uid = newEntry.id;
       this.context.commit('addUserLogEntry', newLogEntry);
     }
     catch (error) {

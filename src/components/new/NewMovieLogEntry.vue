@@ -167,14 +167,14 @@ export default class NewMovieLogEntry extends Vue{
 
   async save () {
     const result = await UserLogEntriesStore.createNewUserLogEntry({
+      date: this.form.date,
+      type: LogEntryType.Movie,
       name: this.form.name,
       platform: this.form.platform,
       rating: this.form.rating,
       review: this.form.review,
-      date: this.form.date,
-      createdDate: new Date(),
-      updatedDate: new Date(),
-      type: LogEntryType.Movie
+      images: [],
+      externalId: null
     });
 
     if (result === true) {
