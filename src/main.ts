@@ -9,6 +9,7 @@ import App from './App.vue';
 import { FirebaseAuth } from '@/firebase';
 import store from './store';
 import UserLogEntriesStore from './store/modules/userLogEntries';
+import VueFilterDateFormat from '@vuejs-community/vue-filter-date-format';
 
 Vue.use(VueMaterial);
 Vue.use(VueMaterialLocales, [es]);
@@ -17,6 +18,7 @@ Vue.use(VueNoty, {
   progressBar: true,
   layout: 'topRight'
 });
+Vue.use(VueFilterDateFormat);
 
 
 let app;
