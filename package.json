@@ -11,7 +11,7 @@
     "@undecaf/vue-material-locales": "^0.2.1",
     "@vuejs-community/vue-filter-date-format": "^1.6.3",
     "firebase": "^7.14.2",
-    "vue-material": "^1.0.0-beta-12",
+    "vue-material": "1.0.0-beta-15",
     "vue-rate-it": "^2.1.0",
     "vue-router": "^3.1.6",
     "vuejs-noty": "^0.1.3",

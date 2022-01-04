@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form novalidate class="md-layout" @submit.prevent="validate">
+    <form novalidate class="md-layout" @submit.prevent="validate" enctype="multipart/form-data">
       <md-card class="md-layout-item md-size-50 md-small-size-100">
         <md-card-header>
           <div class="md-title">
@@ -57,7 +57,15 @@
                 <span class="md-error" v-if="!$v.form.review.required">Requerido</span>
               </md-field>
             </div>
+          </div>
 
+          <div class="md-layout md-gutter">
+            <div class="md-layout-item md-small-size-100">
+              <md-field :class="getValidationClass('imageNames')">
+                <label for="images">Imágenes</label>
+                <md-file v-model="form.imageNames" multiple accept="image/*" @md-change="onFileUpload($event)"/>
+              </md-field>
+            </div>
           </div>
 
         </md-card-content>
@@ -108,7 +116,8 @@ import { Prop } from 'vue-property-decorator';
       },
       review: {
         required
-      }
+      },
+      images: {}
     }
   },
   components: {
@@ -124,7 +133,9 @@ export default class NewLogEntryForm extends Vue{
     platform: null,
     rating: null,
     review: null,
-    date: new Date()
+    date: new Date(),
+    imageNames: [],
+    images: null,
   };
   logEntryError: string = null;
 
@@ -162,6 +173,10 @@ export default class NewLogEntryForm extends Vue{
     this.logEntryError = null;
   }
 
+  onFileUpload(event: FileList) {
+    this.form.images = event;
+  }
+
   async save () {
     const result = await UserLogEntriesStore.createNewUserLogEntry({
       date: this.form.date,
@@ -170,7 +185,7 @@ export default class NewLogEntryForm extends Vue{
       platform: this.form.platform,
       rating: this.form.rating,
       review: this.form.review,
-      images: [],
+      images: this.form.images,
       externalId: null
     });
 

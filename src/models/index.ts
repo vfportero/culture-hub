@@ -12,6 +12,7 @@ export interface LogEntry {
   updatedDate: Date;
   date: Date;
   type: LogEntryType;
+  typeDefinition?: LogEntryTypeDefinition;
   name: string;
   platform: string;
   rating: number;

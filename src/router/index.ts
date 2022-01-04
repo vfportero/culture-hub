@@ -43,10 +43,7 @@ const router = new VueRouter ({
           children: entryTypes.map(type => ({
             path: type,
             name: `NewLogEntry_${type}`,
-            component: NewLogEntry,
-            props: {
-              selectedType: type
-            }
+            component: NewLogEntry
           })),
         },
       ]

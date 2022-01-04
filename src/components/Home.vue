@@ -14,7 +14,8 @@
         <md-card class="md-layout-item md-size-50 md-small-size-100" v-for="logEntry in logEntries" :key="logEntry.id">
           <md-card-header>
             <md-card-header-text>
-              <h2 class="md-title">{{ logEntry.name }}</h2>
+              <h2 class="md-title">
+                <md-icon>{{logEntry.typeDefinition.icon}}</md-icon> {{ logEntry.name }}</h2>
               <div class="md-subhead">
                 <md-icon>event</md-icon> {{ logEntry.date | dateFormat('DD/MM/YYYY') }}
               </div>
