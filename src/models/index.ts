@@ -1,3 +1,5 @@
+import { LogEntryTypeDefinition } from './LogEntryTypeDefinition';
+
 export interface User {
   uid: string,
   displayName: string;
@@ -18,14 +20,30 @@ export interface LogEntry {
   externalId: string;
 }
 
+export interface LogEntryPlatorm {
+  id: string;
+  name: string;
+}
+
+export interface LogEntryPlatormGroup {
+  name: string;
+  platforms: LogEntryPlatorm[];
+}
 
 export enum LogEntryType {
-  Movie = "movie",
-  TvShow = "tv-show",
-  BoardGame = "board-game",
-  VideoGame = "video-game",
-  Book = "book",
-  EscapeRoom = "escape-room",
-  Play = "play",
-  Concert = "concert",
+  Movie = 'movie',
+  TvShow = 'tv_show',
+  BoardGame = 'board_game',
+  VideoGame = 'video_game',
+  Book = 'book',
+  EscapeRoom = 'escape_room',
+  Play = 'play',
+  Concert = 'concert',
+  Album = 'album',
+  Museum = 'museum',
+  Podcasts = 'podcasts',
 }
+
+export {
+  LogEntryTypeDefinition
+};

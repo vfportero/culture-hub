@@ -4,8 +4,7 @@
       <md-card class="md-layout-item md-size-50 md-small-size-100">
         <md-card-header>
           <div class="md-title">
-            <md-icon>movie</md-icon>
-            Añadir nuevo registro de película
+            <md-icon>{{typeDefinition.icon}}</md-icon> Añadir nuevo registro de {{typeDefinition.name}}
           </div>
         </md-card-header>
 
@@ -40,17 +39,8 @@
               <md-field :class="getValidationClass('platform')">
                 <label for="platform">Plataforma</label>
                 <md-select name="platform" id="platform" v-model="form.platform" md-dense :disabled="sending">
-                  <md-optgroup label="Streaming">
-                    <md-option value="netflix">Netflix</md-option>
-                    <md-option value="disney_plus">Disney+</md-option>
-                    <md-option value="hbo_max">HBO Max</md-option>
-                    <md-option value="amazon_prime_video">Amazon Prive Video</md-option>
-                    <md-option value="filmin">Filmin</md-option>
-                  </md-optgroup>
-                  <md-optgroup label="Clásico">
-                    <md-option value="theater">Cine</md-option>
-                    <md-option value="blueray">Soporte físico</md-option>
-                    <md-option value="tv">TV</md-option>
+                  <md-optgroup :label="group.name" v-for="group in typeDefinition.platforms" :key="group.name">
+                    <md-option :value="platform.id" v-for="platform in group.platforms" :key="platform.id">{{platform.name}}</md-option>
                   </md-optgroup>
                 </md-select>
                 <span class="md-error">Requerido</span>
@@ -93,9 +83,10 @@ import {
   maxValue
 } from 'vuelidate/lib/validators';
 import { StarRating } from 'vue-rate-it';
-import { LogEntryType } from '@/models';
+import { LogEntryType, LogEntryTypeDefinition } from '@/models';
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
 
 @Component({
   mixins: [validationMixin],
@@ -122,9 +113,11 @@ import Component from 'vue-class-component';
   },
   components: {
     StarRating
-  },
+  }
 })
-export default class NewMovieLogEntry extends Vue{
+export default class NewLogEntryForm extends Vue{
+  @Prop({ required: true })
+  type: LogEntryType;
 
   form = {
     name: null,
@@ -139,7 +132,11 @@ export default class NewMovieLogEntry extends Vue{
   get sending() {
     return UserLogEntriesStore.loading;
   }
-  
+
+  get typeDefinition() {
+    return new LogEntryTypeDefinition(this.type);
+  }
+
 
   disabledDates(date: Date) {
     return date > new Date();
@@ -168,7 +165,7 @@ export default class NewMovieLogEntry extends Vue{
   async save () {
     const result = await UserLogEntriesStore.createNewUserLogEntry({
       date: this.form.date,
-      type: LogEntryType.Movie,
+      type: this.type,
       name: this.form.name,
       platform: this.form.platform,
       rating: this.form.rating,

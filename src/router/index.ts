@@ -11,9 +11,9 @@ import AccountLogin from '../components/account/Login.vue';
 
 import Home from '../components/Home.vue';
 import NewLogEntry from '../components/new/NewLogEntry.vue';
-import NewMovieLogEntry from '../components/new/NewMovieLogEntry.vue';
+import { LogEntryType } from '@/models';
 
-
+let entryTypes = Object.keys(LogEntryType).map(key => LogEntryType[key]);
 
 const router = new VueRouter ({
   mode: 'history',
@@ -40,13 +40,14 @@ const router = new VueRouter ({
           path: 'new',
           name: 'new',
           component: NewLogEntry,
-          children: [
-            {
-              path: 'movie',
-              name: 'NewMovieLogEntry',
-              component: NewMovieLogEntry,
-            },
-          ]
+          children: entryTypes.map(type => ({
+            path: type,
+            name: `NewLogEntry_${type}`,
+            component: NewLogEntry,
+            props: {
+              selectedType: type
+            }
+          })),
         },
       ]
     },
