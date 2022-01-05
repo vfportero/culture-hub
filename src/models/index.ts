@@ -1,24 +1,13 @@
+import { LogEntry, User } from './domain';
 import { LogEntryTypeDefinition } from './LogEntryTypeDefinition';
 
-export interface User {
-  uid: string,
-  displayName: string;
-  email: string;
+export interface UserModel extends User {
+  uid: string;
 }
 
-export interface LogEntry {
-  uid?: string;
-  createdDate: Date;
-  updatedDate: Date;
-  date: Date;
-  type: LogEntryType;
-  typeDefinition?: LogEntryTypeDefinition;
-  name: string;
-  platform: string;
-  rating: number;
-  review: string;
-  images?: string[];
-  externalId: string;
+export interface LogEntryModel extends LogEntry {
+  uid: string;
+  typeDefinition: LogEntryTypeDefinition;
 }
 
 export interface LogEntryPlatorm {

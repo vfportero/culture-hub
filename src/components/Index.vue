@@ -5,9 +5,13 @@
         <md-button class="md-icon-button" @click="toggleMenu" v-if="!menuVisible">
           <md-icon>menu</md-icon>
         </md-button>
-        <toolbar-main-link></toolbar-main-link>
-        <div class="md-toolbar-section-end">
-          Hola {{userName}}
+        <div class="md-toolbar-section-start">
+          <toolbar-main-link></toolbar-main-link>
+        </div>
+        <div class="md-toolbar-section-end" v-if="userAvatar">
+          <md-avatar>
+            <img :src="userAvatar" alt="Avatar">
+          </md-avatar>
         </div>
       </md-app-toolbar>
 
@@ -42,7 +46,7 @@
 
 <script lang="ts">
 import ToolbarMainLink from './shared/ToolbarMainLink.vue';
-import UserLogEntriesStore from '@/store/modules/userLogEntries';
+import UserStore from '@/store/modules/user';
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
@@ -87,8 +91,8 @@ export default class Index extends Vue {
   }
 
   
-  get userName() {
-    return UserLogEntriesStore.userName;
+  get userAvatar() {
+    return UserStore.user?.avatar;
   }
   
   toggleMenu() {

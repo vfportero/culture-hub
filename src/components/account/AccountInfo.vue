@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { FirebaseAuth } from '@/firebase';
+import { FirebaseAuth } from '@/services/firebase';
 import Vue from 'vue';
 import Component from 'vue-class-component';
 

@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter  from 'vue-router';
-import {FirebaseAuth} from '../firebase';
+import {FirebaseAuth} from '../services/firebase';
 Vue.use(VueRouter);
 
 import Index from '../components/Index.vue';

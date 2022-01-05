@@ -1,7 +1,10 @@
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
 import store from '@/store';
-import { LogEntry, LogEntryType, LogEntryTypeDefinition, User } from '@/models';
-import { FirebaseDatabase, FirebaseStorage } from '@/firebase';
+import { LogEntryModel, LogEntryType } from '@/models';
+import { FirebaseStorage } from '@/services/firebase';
+import UserStore from './user';
+import databaseService from '@/services/firebase/databaseService';
+
 
 @Module({
   namespaced: true,
@@ -10,79 +13,41 @@ import { FirebaseDatabase, FirebaseStorage } from '@/firebase';
   name: 'user_log_entries',
 })
 class UserLogEntriesStore extends VuexModule {
-  user: User = null;
-  logEntries: LogEntry[] = [];
+  logEntries: LogEntryModel[] = [];
   loading: boolean = false;
-
-  get userName(): string {
-    return this.user?.displayName ?? this.user?.email ?? '';
-  }
-
-  @Action
-  userLogged(user: User) {
-    this.context.commit('setUser', user);
-    this.context.dispatch('fetchUserLogEntries');
-  }
 
   @Action
   async fetchUserLogEntries() {
-    if (this.user) {
-      this.context.commit('setLoading', true);
-      const userLogEntries = await FirebaseDatabase.collection('user_log_entries').doc(this.user.uid).collection('log_entries').orderBy('date', 'desc').orderBy('createdDate', 'desc').get();
-      const mappedEntries = await userLogEntries.docs.map(doc => {
-        const docData = doc.data();
-        const entry = {
-          ...docData,
-          typeDefinition: new LogEntryTypeDefinition(docData.type),
-          uid: doc.id,
-          date: new Date(docData.date.seconds * 1000),
-          createdDate: new Date(docData.createdDate.seconds * 1000),
-          updatedDate: new Date(docData.updatedDate.seconds * 1000),
-        };
-        return entry;
-      });
-      this.context.commit('setUserLogEntries', mappedEntries);
-      this.context.commit('setLoading', false);
+    if (UserStore.user) {
+      this.setLoading(true);
+      const userLogEntries = await databaseService.getUserLogEntries(UserStore.user.uid);
+      this.setUserLogEntries(userLogEntries);
+      this.setLoading(false);
     }
   }
 
   @Action
   async createNewUserLogEntry(payload: { date: Date, type: LogEntryType, name: string, platform: string, rating: number, review: string, images: FileList, externalId: string, }): Promise<boolean | string> {
-    this.context.commit('setLoading', true);
-    try {
-      const now = new Date();
-      const newLogEntry: LogEntry = {
-        createdDate: now,
-        updatedDate: now,
-        date: payload.date,
-        type: payload.type,
-        name: payload.name,
-        platform: payload.platform,
-        rating: payload.rating,
-        review: payload.review,
-        externalId: payload.externalId
-      };
+    this.setLoading(true);
     
-      const userLogEntries = await FirebaseDatabase.collection('user_log_entries').doc(this.user.uid).collection('log_entries');
-      const newEntry = await userLogEntries.add(newLogEntry);
-      newLogEntry.uid = newEntry.id;
+    try {
+      const newEntryId = await databaseService.createUserLogEntry(UserStore.user.uid, payload);
 
-      if (payload.images.length > 0) {
+      if (payload.images?.length > 0) {
         var storageRef = FirebaseStorage.ref();
-        const imageUrls = [];
+        const imageUrls: string[] = [];
 
         for (const image of Array.from(payload.images)) {
-          const result = await storageRef.child(`${newLogEntry.uid}/${image.name}`).put(image);
+          const result = await storageRef.child(`${newEntryId}/${image.name}`).put(image);
           if (result.state === 'success') {
             imageUrls.push(await result.ref.getDownloadURL());
           }
         }
 
-        newLogEntry.images = imageUrls;
-        newEntry.update(newLogEntry);
+        await databaseService.updateUserLogEntry(UserStore.user.uid, newEntryId, { images: imageUrls });
       }
 
-      this.context.commit('addUserLogEntry', newLogEntry);
+      this.addUserLogEntry(await databaseService.getUserLogEntry(UserStore.user.uid, newEntryId));
     }
     catch (error) {
       return error.toString();
@@ -95,17 +60,12 @@ class UserLogEntriesStore extends VuexModule {
   }
 
   @Mutation
-  setUser(user: User) {
-    this.user = user;
-  }
-
-  @Mutation
-  setUserLogEntries(logEntries: LogEntry[]) {
+  setUserLogEntries(logEntries: LogEntryModel[]) {
     this.logEntries = logEntries;
   }
 
   @Mutation
-  addUserLogEntry(logEntry: LogEntry) {
+  addUserLogEntry(logEntry: LogEntryModel) {
     this.logEntries.unshift(logEntry);
   }
 

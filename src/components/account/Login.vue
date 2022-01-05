@@ -1,60 +1,40 @@
 <template>
 	<div id="account-login-container">
-		<md-field>
-			<label>Email</label>
-			<md-input id="email" v-model="email"></md-input>
-		</md-field>
-
-		<md-field>
-			<label>Password</label>
-			<md-input id="password" v-model="password" type="password"></md-input>
-		</md-field>
+		
 
 		<p>{{errorMessage}}</p>
 
-		<md-button class="md-raised md-primary" @click="login">Login</md-button>
+		<md-button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--twitter" @click="login">
+      <i class="fa fa-twitter fa-fw"></i> Inicia sesión con Twitter
+    </md-button>
 	</div>
 </template>
 
 <script lang="ts">
-import {FirebaseAuth} from '@/firebase';
-import UserLogEntriesStore from '@/store/modules/userLogEntries';
+import { FirebaseAuth } from '@/services/firebase';
+import UserStore from '@/store/modules/user';
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
+
 @Component
 export default class AccountLogin extends Vue {
-  email = '';
-  password = '';
   errorMessage = '';
 
   mounted() {
     FirebaseAuth.onAuthStateChanged((user) => {
-      if (user && this.email === '') this.$router.replace('/account').catch(() => {
+      if (user) this.$router.replace('/account').catch(() => {
       }); // User already logged
     });
   }
   
-  
-  login() {
-    if (this.email.length < 6 || this.password.length < 4) {
-      this.errorMessage = 'Insert email and password';
-    } else {
-      FirebaseAuth.signInWithEmailAndPassword(this.email, this.password).then(() => {
-        this.password = '';
-        UserLogEntriesStore.userLogged({
-          uid: FirebaseAuth.currentUser.uid,
-          email: FirebaseAuth.currentUser.email,
-          displayName: FirebaseAuth.currentUser.displayName,
-        });
-        this.$router.replace('/home'); // User logged
-      }).catch((error) => {
-        if (error.code === 'auth/wrong-password') {
-          this.errorMessage = 'Password wrong';
-        } else {
-          this.errorMessage = 'Check email and password';
-        }
-      });
+  async login() {
+    const loginResult = await UserStore.loginWithTwitter();
+    if (loginResult === true) {
+      this.$router.replace('/home');
+    }
+    else {
+      this.errorMessage = loginResult.toString();
     }
   }
   
@@ -63,6 +43,29 @@ export default class AccountLogin extends Vue {
 
 <style lang="scss">
 	#account-login-container {
-
+    .mdl-button.mdl-button--twitter {
+      color: rgb(63, 81, 181)
+    }.mdl-button.mdl-button--twitter {
+        color: rgb(63, 81, 181)
+    }
+    .mdl-button.mdl-button--twitter:focus:not(:active) {
+        background-color: #00acee
+    }
+    .mdl-button--raised.mdl-button--twitter {
+        background: #00acee;
+        color: rgb(255, 255, 255)
+    }
+    .mdl-button--raised.mdl-button--twitter:hover {
+        background-color: #00acee
+    }
+    .mdl-button--raised.mdl-button--twitter:active {
+        background-color: #00acee
+    }
+    .mdl-button--raised.mdl-button--twitter:focus:not(:active) {
+        background-color: #00acee
+    }
+    .mdl-button--raised.mdl-button--twitter .mdl-ripple {
+        background: rgb(255, 255, 255)
+    }
 	}
 </style>

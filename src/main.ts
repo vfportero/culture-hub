@@ -6,9 +6,9 @@ import es from '@undecaf/vue-material-locales/dist/locale/es';
 import 'vue-material/dist/vue-material.min.css';
 import VueNoty from 'vuejs-noty';
 import App from './App.vue';
-import { FirebaseAuth } from '@/firebase';
+import { FirebaseAuth } from '@/services/firebase';
 import store from './store';
-import UserLogEntriesStore from './store/modules/userLogEntries';
+import UserStore from './store/modules/user';
 import VueFilterDateFormat from '@vuejs-community/vue-filter-date-format';
 
 Vue.use(VueMaterial);
@@ -38,11 +38,7 @@ FirebaseAuth.onAuthStateChanged((user) => { // Mount app only after firebase aut
     app.$material.selectLocale('es');
 
     if (user) {
-      UserLogEntriesStore.userLogged({
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-      });
+      UserStore.userLogged(user.uid);
     }
   }
 });
