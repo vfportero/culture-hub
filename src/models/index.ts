@@ -17,7 +17,7 @@ export interface LogEntry {
   platform: string;
   rating: number;
   review: string;
-  images: string[];
+  images?: string[];
   externalId: string;
 }
 

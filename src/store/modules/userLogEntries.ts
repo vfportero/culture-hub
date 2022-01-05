@@ -50,18 +50,6 @@ class UserLogEntriesStore extends VuexModule {
   async createNewUserLogEntry(payload: { date: Date, type: LogEntryType, name: string, platform: string, rating: number, review: string, images: FileList, externalId: string, }): Promise<boolean | string> {
     this.context.commit('setLoading', true);
     try {
-      var storageRef = FirebaseStorage.ref();
-      const imageUrls = [];
-
-      for (const image of Array.from(payload.images)) {
-        const result = await storageRef.child(image.name).put(image);
-        if (result.state === 'success') {
-          imageUrls.push(await result.ref.getDownloadURL());
-        }
-      }
-
-      debugger; // eslint-disable-line
-
       const now = new Date();
       const newLogEntry: LogEntry = {
         createdDate: now,
@@ -72,14 +60,28 @@ class UserLogEntriesStore extends VuexModule {
         platform: payload.platform,
         rating: payload.rating,
         review: payload.review,
-        images: imageUrls,
         externalId: payload.externalId
       };
-    
     
       const userLogEntries = await FirebaseDatabase.collection('user_log_entries').doc(this.user.uid).collection('log_entries');
       const newEntry = await userLogEntries.add(newLogEntry);
       newLogEntry.uid = newEntry.id;
+
+      if (payload.images.length > 0) {
+        var storageRef = FirebaseStorage.ref();
+        const imageUrls = [];
+
+        for (const image of Array.from(payload.images)) {
+          const result = await storageRef.child(`${newLogEntry.uid}/${image.name}`).put(image);
+          if (result.state === 'success') {
+            imageUrls.push(await result.ref.getDownloadURL());
+          }
+        }
+
+        newLogEntry.images = imageUrls;
+        newEntry.update(newLogEntry);
+      }
+
       this.context.commit('addUserLogEntry', newLogEntry);
     }
     catch (error) {
