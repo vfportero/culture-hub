@@ -26,6 +26,7 @@ class UserStore extends VuexModule {
       const user = await DatabaseService.getUser(authResult.user.uid);
       if (!user) {
         if (authResult.additionalUserInfo.username !== 'vfportero') {
+          FirebaseAuth.signOut();
           return 'Lo siento pero de momento solo yo puedo usar la aplicación. Más info en @vfportero';
         }
         const twitterCredentials = authResult.credential.toJSON();
