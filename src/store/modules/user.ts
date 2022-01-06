@@ -23,26 +23,28 @@ class UserStore extends VuexModule {
   async loginWithTwitter(): Promise<boolean | string> {
     try {
       const authResult = await FirebaseAuth.signInWithPopup(FirebaseTwitterAuth);
-      const user = await DatabaseService.getUser(authResult.user.uid);
-      if (!user) {
-        if (authResult.additionalUserInfo.username !== 'vfportero') {
-          FirebaseAuth.signOut();
-          return 'Lo siento pero de momento solo yo puedo usar la aplicación. Más info en @vfportero';
+      if (authResult?.user) {
+        const user = await DatabaseService.getUser(authResult.user.uid);
+        if (!user) {
+          if (authResult.additionalUserInfo.username !== 'vfportero') {
+            FirebaseAuth.signOut();
+            return 'Lo siento pero de momento solo yo puedo usar la aplicación. Más info en @vfportero';
+          }
+          const twitterCredentials = authResult.credential.toJSON();
+          await databaseService.createUser(
+            authResult.user.uid,
+            authResult.user.email ?? authResult.additionalUserInfo.profile['email'],
+            authResult.user.displayName ?? authResult.additionalUserInfo.profile['name'],
+            authResult.user.photoURL ?? authResult.additionalUserInfo.profile['profile_image_url_https'],
+            twitterCredentials['oauthAccessToken'],
+            twitterCredentials['oauthTokenSecret']
+          );
         }
-        const twitterCredentials = authResult.credential.toJSON();
-        await databaseService.createUser(
-          authResult.user.uid,
-          authResult.user.email ?? authResult.additionalUserInfo.profile['email'],
-          authResult.user.displayName ?? authResult.additionalUserInfo.profile['name'],
-          authResult.user.photoURL ?? authResult.additionalUserInfo.profile['profile_image_url_https'],
-          twitterCredentials['oauthAccessToken'],
-          twitterCredentials['oauthTokenSecret']
-        );
+
+        this.userLogged(authResult.user.uid);
+
+        return true;
       }
-
-      this.userLogged(authResult.user.uid);
-
-      return true;
     }
     catch (error) {
       return error.toString();

@@ -61,6 +61,9 @@ const router = new VueRouter ({
           path: 'login',
           name: 'account-login',
           component: AccountLogin,
+          meta: {
+            disallowedOnAuth: true
+          }
         }
       ]
     }
@@ -70,8 +73,10 @@ const router = new VueRouter ({
 router.beforeEach((to, from, next) => {
   let currentUser = FirebaseAuth.currentUser;
   let requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  let disallowedOnAuth = to.matched.some(record => record.meta.disallowedOnAuth);
 
   if(requiresAuth && !currentUser) next('/account/login');
+  if(disallowedOnAuth && currentUser) next('/home');
   else next();
 });
 

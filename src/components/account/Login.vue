@@ -11,7 +11,6 @@
 </template>
 
 <script lang="ts">
-import { FirebaseAuth } from '@/services/firebase';
 import UserStore from '@/store/modules/user';
 import Vue from 'vue';
 import Component from 'vue-class-component';
@@ -20,13 +19,6 @@ import Component from 'vue-class-component';
 @Component
 export default class AccountLogin extends Vue {
   errorMessage = '';
-
-  mounted() {
-    FirebaseAuth.onAuthStateChanged((user) => {
-      if (user) this.$router.replace('/account').catch(() => {
-      }); // User already logged
-    });
-  }
   
   async login() {
     const loginResult = await UserStore.loginWithTwitter();
