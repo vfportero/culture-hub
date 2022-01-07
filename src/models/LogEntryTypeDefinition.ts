@@ -63,6 +63,17 @@ export class LogEntryTypeDefinition {
       return '';
     }
   }
+
+  getPlatformName(id: string): string {
+    for (const group of this.platforms) {
+      for (const platform of group.platforms) {
+        if (platform.id === id) {
+          return platform.name;
+        }
+      }
+    }
+    return '';
+  }
   
   get platforms(): Array<LogEntryPlatormGroup> {
     switch(this.type) {

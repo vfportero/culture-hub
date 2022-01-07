@@ -4,6 +4,7 @@ import { LogEntryModel, LogEntryType } from '@/models';
 import { FirebaseStorage } from '@/services/firebase';
 import UserStore from './user';
 import databaseService from '@/services/firebase/databaseService';
+import TwitterService from '@/services/twitter';
 
 
 @Module({
@@ -13,14 +14,14 @@ import databaseService from '@/services/firebase/databaseService';
   name: 'user_log_entries',
 })
 class UserLogEntriesStore extends VuexModule {
-  logEntries: LogEntryModel[] = [];
+  currentYearLogEntries: LogEntryModel[] = [];
   loading: boolean = false;
 
   @Action
-  async fetchUserLogEntries() {
+  async fetchCurrentYearUserLogEntries() {
     if (UserStore.user) {
       this.setLoading(true);
-      const userLogEntries = await databaseService.getUserLogEntries(UserStore.user.uid);
+      const userLogEntries = await databaseService.getYearUserLogEntries(UserStore.user.uid, new Date().getFullYear());
       this.setUserLogEntries(userLogEntries);
       this.setLoading(false);
     }
@@ -47,6 +48,10 @@ class UserLogEntriesStore extends VuexModule {
         await databaseService.updateUserLogEntry(UserStore.user.uid, newEntryId, { images: imageUrls });
       }
 
+      const newEntry = await databaseService.getUserLogEntry(UserStore.user.uid, newEntryId);
+
+      this.tweetUserLogEntry(newEntry);
+
       this.addUserLogEntry(await databaseService.getUserLogEntry(UserStore.user.uid, newEntryId));
     }
     catch (error) {
@@ -59,14 +64,39 @@ class UserLogEntriesStore extends VuexModule {
     return true;
   }
 
+  @Action
+  async tweetUserLogEntry(logEntry: LogEntryModel) {
+    let lastTweetId: string;
+    for (const logEntry of this.currentYearLogEntries) {
+      if (logEntry.tweetId) {
+        lastTweetId = logEntry.tweetId;
+        break;
+      }
+    }
+
+    if (lastTweetId) {
+      const tweetId = await TwitterService.notifyLogEntry(this.currentYearLogEntries.length, lastTweetId, logEntry, UserStore.user.twitterAccessToken, UserStore.user.twitterTokenSecret);
+      await databaseService.updateUserLogEntry(UserStore.user.uid, logEntry.uid, { tweetId });
+      this.setUserLogEntryTweetId(logEntry.uid, tweetId);
+    }
+  }
+
   @Mutation
   setUserLogEntries(logEntries: LogEntryModel[]) {
-    this.logEntries = logEntries;
+    this.currentYearLogEntries = logEntries;
+  }
+
+  @Mutation
+  setUserLogEntryTweetId(logEntryId: string, tweetId: string) {
+    const logEntry = this.currentYearLogEntries.find(x => x.uid === logEntryId);
+    if (logEntry) {
+      logEntry.tweetId = tweetId;
+    }
   }
 
   @Mutation
   addUserLogEntry(logEntry: LogEntryModel) {
-    this.logEntries.unshift(logEntry);
+    this.currentYearLogEntries.unshift(logEntry);
   }
 
   @Mutation

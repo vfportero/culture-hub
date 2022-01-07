@@ -18,7 +18,7 @@ class DatabaseService {
         email: docData.email,
         lastLoginDate: docData.lastLoginDate,
         avatar: docData.avatar,
-        twitterTokenSecret: docData.twitterAccessSecret,
+        twitterTokenSecret: docData.twitterTokenSecret,
         twitterAccessToken: docData.twitterAccessToken,
       };
     }
@@ -50,6 +50,14 @@ class DatabaseService {
     });
   }
 
+  async getYearUserLogEntries(userId: string, year: number): Promise<LogEntryModel[]> {
+    const userLogEntries = await this.userLogEntriesCollection.doc(userId).collection('log_entries').where('year', '==', year).orderBy('date', 'desc').orderBy('createdDate', 'desc').get();
+
+    return await userLogEntries.docs.map(doc => {
+      return this.mapToLogEntryModel(doc.id, doc.data());
+    });
+  }
+
   async getUserLogEntries(userId: string): Promise<LogEntryModel[]> {
     const userLogEntries = await this.userLogEntriesCollection.doc(userId).collection('log_entries').orderBy('date', 'desc').orderBy('createdDate', 'desc').get();
     return await userLogEntries.docs.map(doc => {
@@ -71,6 +79,8 @@ class DatabaseService {
       date: new Date(docData.date.seconds * 1000),
       createdDate: new Date(docData.createdDate.seconds * 1000),
       updatedDate: new Date(docData.updatedDate.seconds * 1000),
+      year: docData.year,
+      tweetId: docData.tweetId,
     };
   }
 
@@ -85,7 +95,8 @@ class DatabaseService {
       platform: payload.platform,
       rating: payload.rating,
       review: payload.review,
-      externalId: payload.externalId
+      externalId: payload.externalId,
+      year: payload.date.getFullYear()
     };
 
     const newEntry = await this.userLogEntriesCollection.doc(userId).collection('log_entries').add(newLogEntry);
@@ -100,7 +111,7 @@ class DatabaseService {
     return null;
   }
 
-  async updateUserLogEntry(userId: string, entryId: string, payload: { date?: Date, name?: string, platform?: string, rating?: number, review?: string, images?: string[] }): Promise<void> {
+  async updateUserLogEntry(userId: string, entryId: string, payload: { date?: Date, name?: string, platform?: string, rating?: number, review?: string, images?: string[], tweetId?: string }): Promise<void> {
     const userLogEntry = await this.userLogEntriesCollection.doc(userId).collection('log_entries').doc(entryId);
     await userLogEntry.update({
       ...payload,

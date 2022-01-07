@@ -56,7 +56,7 @@ class UserStore extends VuexModule {
     const user = await DatabaseService.getUser(userId);
     user.lastLoginDate = new Date();
     this.setUser(user);
-    UserLogEntriesStore.fetchUserLogEntries();
+    UserLogEntriesStore.fetchCurrentYearUserLogEntries();
   }
 
   
