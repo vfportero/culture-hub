@@ -16,7 +16,7 @@ Vue.use(VueMaterialLocales, [es]);
 Vue.use(VueNoty, {
   timeout: 4000,
   progressBar: true,
-  layout: 'topRight'
+  layout: 'topRight',
 });
 Vue.use(VueFilterDateFormat);
 
@@ -32,7 +32,7 @@ FirebaseAuth.onAuthStateChanged((user) => { // Mount app only after firebase aut
     app = new Vue({
       router,
       store,
-      render: h => h(App)
+      render: h => h(App),
     }).$mount('#app');
 
     app.$material.selectLocale('es');

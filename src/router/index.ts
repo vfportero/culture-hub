@@ -13,7 +13,7 @@ import Home from '../components/Home.vue';
 import NewLogEntry from '../components/new/NewLogEntry.vue';
 import { LogEntryType } from '@/models';
 
-let entryTypes = Object.keys(LogEntryType).map(key => LogEntryType[key]);
+const entryTypes = Object.keys(LogEntryType).map(key => LogEntryType[key]);
 
 const router = new VueRouter ({
   mode: 'history',
@@ -28,7 +28,7 @@ const router = new VueRouter ({
       path: '/',
       component: Index,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
       },
       children: [
         {
@@ -43,10 +43,10 @@ const router = new VueRouter ({
           children: entryTypes.map(type => ({
             path: type,
             name: `NewLogEntry_${type}`,
-            component: NewLogEntry
+            component: NewLogEntry,
           })),
         },
-      ]
+      ],
     },
     {
       path: '/account',
@@ -62,18 +62,18 @@ const router = new VueRouter ({
           name: 'account-login',
           component: AccountLogin,
           meta: {
-            disallowedOnAuth: true
-          }
-        }
-      ]
-    }
-  ]
+            disallowedOnAuth: true,
+          },
+        },
+      ],
+    },
+  ],
 });
 
 router.beforeEach((to, from, next) => {
-  let currentUser = FirebaseAuth.currentUser;
-  let requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  let disallowedOnAuth = to.matched.some(record => record.meta.disallowedOnAuth);
+  const currentUser = FirebaseAuth.currentUser;
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const disallowedOnAuth = to.matched.some(record => record.meta.disallowedOnAuth);
 
   if(requiresAuth && !currentUser) next('/account/login');
   if(disallowedOnAuth && currentUser) next('/home');

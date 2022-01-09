@@ -16,7 +16,7 @@ import NewLogEntryForm from './NewLogEntryForm.vue';
 
 @Component({
   components: {
-    NewLogEntryForm
+    NewLogEntryForm,
   },
 })
 export default class NewLogEntry extends Vue{

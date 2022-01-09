@@ -15,7 +15,7 @@ import TwitterService from '@/services/twitter';
 })
 class UserLogEntriesStore extends VuexModule {
   currentYearLogEntries: LogEntryModel[] = [];
-  loading: boolean = false;
+  loading = false;
 
   @Action
   async fetchCurrentYearUserLogEntries() {
@@ -28,14 +28,14 @@ class UserLogEntriesStore extends VuexModule {
   }
 
   @Action
-  async createNewUserLogEntry(payload: { date: Date, type: LogEntryType, name: string, platform: string, rating: number, review: string, images: FileList, externalId: string, }): Promise<boolean | string> {
+  async createNewUserLogEntry(payload: { date: Date; type: LogEntryType; name: string; platform: string; rating: number; review: string; images: FileList; externalId: string }): Promise<boolean | string> {
     this.setLoading(true);
     
     try {
       const newEntryId = await databaseService.createUserLogEntry(UserStore.user.uid, payload);
 
       if (payload.images?.length > 0) {
-        var storageRef = FirebaseStorage.ref();
+        const storageRef = FirebaseStorage.ref();
         const imageUrls: string[] = [];
 
         for (const image of Array.from(payload.images)) {

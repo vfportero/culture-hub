@@ -36,18 +36,18 @@
 </template>
 
 <script lang="ts">
+import { LogEntry } from '@/models/domain';
 import UserLogEntriesStore from '@/store/modules/userLogEntries';
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
 @Component
 export default class Home extends Vue {
-  
-  get logEntries() {
+  get logEntries(): LogEntry[] {
     return UserLogEntriesStore.currentYearLogEntries;
   }
 
-  get  loading() {
+  get loading(): boolean{
     return UserLogEntriesStore.loading;
   }
 }
@@ -66,6 +66,11 @@ export default class Home extends Vue {
 				height: 100%;
 			}
 		}
+
+    .md-card-content {
+      white-space: pre-wrap;
+      line-break: anywhere;
+    }
 	}
  
 </style>

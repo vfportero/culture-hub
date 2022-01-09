@@ -15,5 +15,5 @@ export {
   FirebaseAuth,
   FirebaseTwitterAuth,
   FirebaseDatabase,
-  FirebaseStorage
+  FirebaseStorage,
 };

@@ -37,7 +37,7 @@ class UserStore extends VuexModule {
             authResult.user.displayName ?? authResult.additionalUserInfo.profile['name'],
             authResult.user.photoURL ?? authResult.additionalUserInfo.profile['profile_image_url_https'],
             twitterCredentials['oauthAccessToken'],
-            twitterCredentials['oauthTokenSecret']
+            twitterCredentials['oauthTokenSecret'],
           );
         }
 

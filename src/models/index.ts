@@ -35,5 +35,5 @@ export enum LogEntryType {
 }
 
 export {
-  LogEntryTypeDefinition
+  LogEntryTypeDefinition,
 };

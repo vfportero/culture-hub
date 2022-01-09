@@ -88,7 +88,7 @@ import UserLogEntriesStore from '@/store/modules/userLogEntries';
 import {
   required,
   minValue,
-  maxValue
+  maxValue,
 } from 'vuelidate/lib/validators';
 import { StarRating } from 'vue-rate-it';
 import { LogEntryType, LogEntryTypeDefinition } from '@/models';
@@ -101,28 +101,28 @@ import { Prop } from 'vue-property-decorator';
   validations: {
     form: {
       name: {
-        required
+        required,
       },
       rating: {
         required,
         minValue: minValue(0.5),
-        maxValue: maxValue(5)
+        maxValue: maxValue(5),
       },
       platform: {
-        required
+        required,
       },
       date: {
-        required
+        required,
       },
       review: {
-        required
+        required,
       },
-      images: {}
-    }
+      images: {},
+    },
   },
   components: {
-    StarRating
-  }
+    StarRating,
+  },
 })
 export default class NewLogEntryForm extends Vue{
   @Prop({ required: true })
@@ -158,7 +158,7 @@ export default class NewLogEntryForm extends Vue{
 
     if (field) {
       return {
-        'md-invalid': field.$invalid && field.$dirty
+        'md-invalid': field.$invalid && field.$dirty,
       };
     }
   }
@@ -186,7 +186,7 @@ export default class NewLogEntryForm extends Vue{
       rating: this.form.rating,
       review: this.form.review,
       images: this.form.images,
-      externalId: null
+      externalId: null,
     });
 
     if (result === true) {

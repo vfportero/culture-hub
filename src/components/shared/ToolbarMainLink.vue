@@ -11,9 +11,9 @@ export default {
   props: {
     to: {
       type: String,
-      default: '/home'
-    }
-  }
+      default: '/home',
+    },
+  },
 };
 </script>
 

@@ -26,7 +26,7 @@ class DatabaseService {
   }
 
   async createUser(uid: string, email: string, displayName: string, avatar: string, twitterAccessToken: string, twitterTokenSecret: string) {
-    var user: User = {
+    const user: User = {
       displayName: displayName,
       email: email,
       lastLoginDate: new Date(),
@@ -84,7 +84,7 @@ class DatabaseService {
     };
   }
 
-  async createUserLogEntry(userId: string, payload: { date: Date, type: LogEntryType, name: string, platform: string, rating: number, review: string, externalId: string, }): Promise<string> {
+  async createUserLogEntry(userId: string, payload: { date: Date; type: LogEntryType; name: string; platform: string; rating: number; review: string; externalId: string }): Promise<string> {
     const now = new Date();
     const newLogEntry: LogEntry = {
       createdDate: now,
@@ -96,7 +96,7 @@ class DatabaseService {
       rating: payload.rating,
       review: payload.review,
       externalId: payload.externalId,
-      year: payload.date.getFullYear()
+      year: payload.date.getFullYear(),
     };
 
     const newEntry = await this.userLogEntriesCollection.doc(userId).collection('log_entries').add(newLogEntry);
@@ -111,7 +111,7 @@ class DatabaseService {
     return null;
   }
 
-  async updateUserLogEntry(userId: string, entryId: string, payload: { date?: Date, name?: string, platform?: string, rating?: number, review?: string, images?: string[], tweetId?: string }): Promise<void> {
+  async updateUserLogEntry(userId: string, entryId: string, payload: { date?: Date; name?: string; platform?: string; rating?: number; review?: string; images?: string[]; tweetId?: string }): Promise<void> {
     const userLogEntry = await this.userLogEntriesCollection.doc(userId).collection('log_entries').doc(entryId);
     await userLogEntry.update({
       ...payload,

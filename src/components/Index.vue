@@ -77,7 +77,7 @@ export default class Index extends Vue {
       title: 'Account',
       link: '/account',
       auth: true,
-    }
+    },
   ];
   
   mounted() {
