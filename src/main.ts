@@ -1,41 +1,45 @@
-import Vue from 'vue';
+import { createApp } from 'vue'
+import App from './App.vue'
 import router from './router';
-import VueMaterial from 'vue-material';
-import VueMaterialLocales from '@undecaf/vue-material-locales';
-import es from '@undecaf/vue-material-locales/dist/locale/es';
-import 'vue-material/dist/vue-material.min.css';
-import VueNoty from 'vuejs-noty';
-import App from './App.vue';
+
+import { IonicVue } from '@ionic/vue';
+
+/* Core CSS required for Ionic components to work properly */
+import '@ionic/vue/css/core.css';
+
+/* Basic CSS for apps built with Ionic */
+import '@ionic/vue/css/normalize.css';
+import '@ionic/vue/css/structure.css';
+import '@ionic/vue/css/typography.css';
+
+/* Optional CSS utils that can be commented out */
+import '@ionic/vue/css/padding.css';
+import '@ionic/vue/css/float-elements.css';
+import '@ionic/vue/css/text-alignment.css';
+import '@ionic/vue/css/text-transformation.css';
+import '@ionic/vue/css/flex-utils.css';
+import '@ionic/vue/css/display.css';
+
 import { FirebaseAuth } from '@/services/firebase';
 import store from './store';
 import UserStore from './store/modules/user';
-import VueFilterDateFormat from '@vuejs-community/vue-filter-date-format';
 
-Vue.use(VueMaterial);
-Vue.use(VueMaterialLocales, [es]);
-Vue.use(VueNoty, {
-  timeout: 4000,
-  progressBar: true,
-  layout: 'topRight',
-});
-Vue.use(VueFilterDateFormat);
+/* Theme variables */
+import './theme/variables.css';
 
-
-let app;
-Vue.config.productionTip = false;
-
-
+let app: any;
 
 FirebaseAuth.onAuthStateChanged((user) => { // Mount app only after firebase auth initialized
   
   if (!app) {
-    app = new Vue({
-      router,
-      store,
-      render: h => h(App),
-    }).$mount('#app');
-
-    app.$material.selectLocale('es');
+    const app = createApp(App)
+      .use(IonicVue)
+      .use(store)
+      .use(router);
+      
+    router.isReady().then(() => {
+      app.mount('#app');
+    });
 
     if (user) {
       UserStore.userLogged(user.uid);

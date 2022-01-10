@@ -7,8 +7,8 @@ class TwitterService {
     const message = this.composeMessage(yearCount, logEntry);
     const tweets = this.truncateMessageInTweets(message, []);
 
-    const tweetImages = [...logEntry.images];
-    const thread = tweets.reduce((acc, tweet, i) => {
+    const tweetImages = [...logEntry.images ?? []];
+    const thread = tweets.reduce((acc: any[], tweet, i) => {
       const imagesPerTweet = tweetImages ? Math.ceil(tweetImages.length / (tweets.length - i)) : 0;
       const imagesForThisTweet = tweetImages ? tweetImages.splice(0, imagesPerTweet) : [];
       acc.push({ message: tweet, images: imagesForThisTweet, replyTo: i === 0 ? replyTo : null });
@@ -96,7 +96,7 @@ class TwitterService {
     return newTweetResponse.data;
   }
 
-  private truncate(str, n ){
+  private truncate(str: string, n: number ){
     if (str.length <= n) { return str; }
     const subString = str.substr(0, n-1);
     return subString.substr(0, subString.lastIndexOf(' '));

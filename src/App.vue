@@ -1,34 +1,20 @@
 <template>
-	<div id="app">
-		<router-view class="router-view"/>
-	</div>
+  <ion-app>
+    <ion-router-outlet />
+  </ion-app>
 </template>
 
-<script>
-export default {
+<script lang='ts'>
+import { IonApp, IonRouterOutlet } from '@ionic/vue';
+import { defineComponent } from 'vue';
+export default defineComponent({
   name: 'App',
-};
+  components: {
+    IonApp,
+    IonRouterOutlet
+  }
+});
 </script>
 
-<style lang="scss">
-	@import "../src/style/variables.scss";
-	@import "~vue-material/dist/theme/engine";
-	@include md-register-theme("default", (
-		primary: $primary,
-		accent: $accent,
-	));
-	@include md-register-theme("dark", (
-			primary: $primary,
-			accent: $accent,
-			theme: dark
-	));
-	@import "~vue-material/dist/theme/all";
-	@import "~vuejs-noty/dist/vuejs-noty.css";
-
-	#app, .router-view {
-		margin: 0;
-		border: 0;
-		padding: 0;
-		height: 100vh;
-	}
+<style scoped>
 </style>

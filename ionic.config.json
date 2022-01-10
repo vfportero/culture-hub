@@ -1,0 +1,8 @@
+{
+  "name": "Culture Hub",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue",
+  "id": "d2040952"
+}
