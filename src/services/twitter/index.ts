@@ -9,7 +9,7 @@ class TwitterService {
 
     const tweetImages = [...logEntry.images];
     const thread = tweets.reduce((acc, tweet, i) => {
-      const imagesPerTweet = tweetImages ? Math.ceil(tweetImages.length / tweets.length) : 0;
+      const imagesPerTweet = tweetImages ? Math.ceil(tweetImages.length / (tweets.length - i)) : 0;
       const imagesForThisTweet = tweetImages ? tweetImages.splice(0, imagesPerTweet) : [];
       acc.push({ message: tweet, images: imagesForThisTweet, replyTo: i === 0 ? replyTo : null });
       return acc;

@@ -101,8 +101,8 @@ export class LogEntryTypeDefinition {
         ];
       case LogEntryType.BoardGame:
         return [
-          { name: 'Clásico', platforms: [{ id: 'table', name: 'Mesa' }] },
-          { name: 'Online', platforms: [{ id: 'online', name: 'Online' }] },
+          { name: 'Clásico', platforms: [{ id: 'table', name: 'Juego de mesa' }] },
+          { name: 'Online', platforms: [{ id: 'online', name: 'Juego de mesa Online' }] },
         ];
       case LogEntryType.Book:
         return [
@@ -147,17 +147,17 @@ export class LogEntryTypeDefinition {
       case LogEntryType.EscapeRoom:
         return [
           { name: 'Clásico', platforms: [{ id: 'in_place', name: 'En el local de escape' }] },
-          { name: 'Online', platforms: [{ id: 'online', name: 'Online' }] },
+          { name: 'Online', platforms: [{ id: 'online', name: 'Escape Room Online' }] },
         ];
       case LogEntryType.Play:
         return [
           { name: 'Clásico', platforms: [{ id: 'theaters', name: 'Teatro' }] },
-          { name: 'Online', platforms: [{ id: 'online', name: 'Online' }] },
+          { name: 'Online', platforms: [{ id: 'online', name: 'Teatro Online' }] },
         ];
       case LogEntryType.Concert:
         return [
           { name: 'Clásico', platforms: [{ id: 'gig', name: 'Concierto' }, { id: 'festival', name: 'Festival' }] },
-          { name: 'Online', platforms: [{ id: 'online', name: 'Online' }] },
+          { name: 'Online', platforms: [{ id: 'online', name: 'Concierto Online' }] },
         ];
       case LogEntryType.Album:
         return [
@@ -167,7 +167,7 @@ export class LogEntryTypeDefinition {
       case LogEntryType.Museum:
         return [
           { name: 'Clásico', platforms: [{ id: 'in_place', name: 'Museo' }] },
-          { name: 'Online', platforms: [{ id: 'online', name: 'Online' }] },
+          { name: 'Online', platforms: [{ id: 'online', name: 'Museo Online' }] },
         ];
       case LogEntryType.Podcasts:
         return [
@@ -177,8 +177,6 @@ export class LogEntryTypeDefinition {
               { id: 'ivoxx', name: 'Ivoxx' },
               { id: 'apple_podcasts', name: 'Apple Podcasts' },
               { id: 'youtube', name: 'Youtube' },
-              { id: 'ps4', name: 'PS4' },
-              { id: 'ps5', name: 'PS5' },
             ],
           },
         ];

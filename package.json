@@ -1,7 +1,11 @@
 {
-  "name": "vuejs-firebase-auth-base-dashboard-with-vue-material",
+  "name": "culture-hub",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Víctor Fernández Portero (@vfportero)",
+    "email": "vfportero@gmail.com"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
