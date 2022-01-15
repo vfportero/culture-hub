@@ -23,8 +23,8 @@
     "core-js": "^3.6.5",
     "firebase": "^7.14.2",
     "vue": "^3.2.21",
-    "vue-rate-it": "^2.1.0",
     "vue-router": "^4.0.12",
+    "vue-upload-component": "^3.0.50",
     "vuex": "4.0.2"
   },
   "devDependencies": {

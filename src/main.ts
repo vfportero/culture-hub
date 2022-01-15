@@ -19,30 +19,29 @@ import '@ionic/vue/css/text-alignment.css';
 import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
-
-import { FirebaseAuth } from '@/services/firebase';
 import store from './store';
 import UserStore from './store/modules/user';
+import VueUploadComponent from 'vue-upload-component'
 
 /* Theme variables */
 import './theme/variables.css';
+import { FirebaseAuth } from './services/firebase';
 
-let app: any;
+FirebaseAuth.onAuthStateChanged(async (user) => {
+  const app = createApp(App)
+    .use(IonicVue)
+    .use(store)
+    .use(router);
 
-FirebaseAuth.onAuthStateChanged((user) => { // Mount app only after firebase auth initialized
-  
-  if (!app) {
-    const app = createApp(App)
-      .use(IonicVue)
-      .use(store)
-      .use(router);
-      
-    router.isReady().then(() => {
-      app.mount('#app');
-    });
-
+  router.isReady().then(() => {
     if (user) {
       UserStore.userLogged(user.uid);
     }
-  }
+    app.component('file-upload', VueUploadComponent)
+    app.mount('#app');
+  });
 });
+  
+
+
+  

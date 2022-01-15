@@ -5,6 +5,7 @@ import UserLogEntriesStore from './userLogEntries';
 import DatabaseService from '@/services/firebase/databaseService';
 import databaseService from '@/services/firebase/databaseService';
 import { FirebaseAuth, FirebaseTwitterAuth } from '@/services/firebase';
+import { useRouter } from 'vue-router';
 
 @Module({
   namespaced: true,
@@ -17,6 +18,10 @@ class UserStore extends VuexModule {
 
   get userName(): string {
     return this.user?.displayName ?? this.user?.email ?? '';
+  }
+
+  get isLoggedIn() {
+    return this.user || FirebaseAuth.currentUser;
   }
 
   @Action
@@ -57,6 +62,15 @@ class UserStore extends VuexModule {
     user.lastLoginDate = new Date();
     this.setUser(user);
     UserLogEntriesStore.fetchCurrentYearUserLogEntries();
+  }
+
+  @Action
+  async logout() {
+    await FirebaseAuth.signOut();
+    this.setUser(null);
+    UserLogEntriesStore.setUserLogEntries([]);
+    const router = useRouter();
+    router.replace('/');
   }
 
   

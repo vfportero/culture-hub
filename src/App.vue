@@ -16,5 +16,11 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style >
+:root {
+}
+.ion-page > ion-content {
+  --padding-top: 32px
+}
+
 </style>

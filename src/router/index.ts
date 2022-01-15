@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import UserStore from '@/store/modules/user';
+import { LogEntryType } from '@/models';
+const entryTypes = Object.keys(LogEntryType).map(key => LogEntryType[key]);
+
 
 
 /**
@@ -10,9 +13,9 @@ import UserStore from '@/store/modules/user';
  * @param next 
  */
 const authCheck = (to: any, from: any, next: any) => {
-  if (UserStore.user) {
+  if (UserStore.isLoggedIn) {
     if (to.name === 'login') {
-      next({ name: 'home' });
+      next({ name: 'timeline' });
     } else {
       next();
     }
@@ -32,33 +35,35 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Login.vue'),
   },
   {
-    name: 'home',
-    path: '/',
+    path: "/",
+    redirect: "/app/timeline",
+  },
+  {
+    path: "/app/",
     component: () => import('@/views/Home.vue'),
     beforeEnter: authCheck,
+    children: [
+      {
+        path: "",
+        redirect: "/app/timeline",
+      },
+      {
+        path: "timeline",
+        name: "timeline",
+        component: () => import("@/views/Timeline.vue"),
+      },
+    ],
   },
-  // {
-  //   path: '/tabs/',
-  //   component: TabsPage,
-  //   children: [
-  //     {
-  //       path: '',
-  //       redirect: '/tabs/tab1',
-  //     },
-  //     {
-  //       path: 'tab1',
-  //       name: 'tab1',
-  //       component: () => import('@/views/Tab1Page.vue'),
-  //       beforeEnter: authCheck,
-  //     },
-  //     {
-  //       path: 'tab2',
-  //       component: () => import('@/views/Tab2Page.vue'),
-  //       beforeEnter: authCheck,
-  //     },
-  //   ],
-  // },
-  // { path: '*', redirect: '/' },
+  {
+    path: '/new-log-entry',
+    name: 'new-log-entry',
+    component: () => import("@/views/NewLogEntry.vue"),
+    children: entryTypes.map(type => ({
+      path: type,
+      name: `NewLogEntry_${type}`,
+      component: () => import("@/views/NewLogEntry.vue"),
+    })),
+  },
 ];
 
 const router = createRouter({
