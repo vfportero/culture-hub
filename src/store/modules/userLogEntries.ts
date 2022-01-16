@@ -28,7 +28,7 @@ class UserLogEntriesStore extends VuexModule {
   }
 
   @Action
-  async createNewUserLogEntry(payload: { date: Date; type: LogEntryType; name: string; platform: string; rating: number; review: string; images: FileList; externalId: string }): Promise<boolean | string> {
+  async createNewUserLogEntry(payload: { date: Date; type: LogEntryType; name: string; platform: string; rating: number; review: string; images: File[]; externalId: string }): Promise<boolean | string> {
     this.setLoading(true);
     
     try {
@@ -58,7 +58,7 @@ class UserLogEntriesStore extends VuexModule {
       return error.toString();
     }
     finally {
-      this.context.commit('setLoading', false);
+      this.setLoading(false);
     }
 
     return true;
@@ -76,7 +76,7 @@ class UserLogEntriesStore extends VuexModule {
 
     if (lastTweetId) {
       const tweetId = await TwitterService.notifyLogEntry(this.currentYearLogEntries.length, lastTweetId, logEntry, UserStore.user.twitterAccessToken, UserStore.user.twitterTokenSecret);
-      await databaseService.updateUserLogEntry(UserStore.user.uid, logEntry.uid, { tweetId });
+      await databaseService.updateUserLogEntry(UserStore.user.uid, logEntry.uid, { tweetId: tweetId });
       this.setUserLogEntryTweetId(logEntry.uid, tweetId);
     }
   }

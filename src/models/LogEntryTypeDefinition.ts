@@ -9,27 +9,27 @@ export class LogEntryTypeDefinition {
   get icon(): string {
     switch(this.type) {
       case LogEntryType.Movie:
-        return 'movie';
+        return 'film';
       case LogEntryType.BoardGame:
-        return 'casino';
+        return 'dice';
       case LogEntryType.Book:
         return 'book';
       case LogEntryType.VideoGame:
-        return 'sports_esports';
+        return 'game-controller';
       case LogEntryType.TvShow:
-        return 'ondemand_video';
+        return 'tv';
       case LogEntryType.EscapeRoom:
-        return 'lock';
+        return 'lock-open';
       case LogEntryType.Play:
-        return 'theater_comedy';
+        return 'ticket';
       case LogEntryType.Concert:
-        return 'speaker';
+        return 'radio';
       case LogEntryType.Album:
-        return 'play_circle_filled';
+        return 'musical-notes';
       case LogEntryType.Museum:
-        return 'museum';
+        return 'image';
       case LogEntryType.Podcasts:
-        return 'podcasts';
+        return 'chatbubbles';
       default:
         return '';
     }

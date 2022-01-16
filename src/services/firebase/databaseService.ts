@@ -8,19 +8,21 @@ class DatabaseService {
   userCollection = FirebaseDatabase.collection('users');
   userLogEntriesCollection = FirebaseDatabase.collection('user_log_entries');
 
-  async getUser(userId: string): Promise<UserModel> {
+  async getUser(userId: string): Promise<UserModel | null> {
     const userRef = (await this.userCollection.doc(userId).get());
     if (userRef.exists) {
       const docData = userRef.data();
-      return {
-        uid: userRef.id,
-        displayName: docData.displayName,
-        email: docData.email,
-        lastLoginDate: docData.lastLoginDate,
-        avatar: docData.avatar,
-        twitterTokenSecret: docData.twitterTokenSecret,
-        twitterAccessToken: docData.twitterAccessToken,
-      };
+      if (docData) { 
+        return {
+          uid: userRef.id,
+          displayName: docData.displayName,
+          email: docData.email,
+          lastLoginDate: docData.lastLoginDate,
+          avatar: docData.avatar,
+          twitterTokenSecret: docData.twitterTokenSecret,
+          twitterAccessToken: docData.twitterAccessToken,
+        };
+      }
     }
     return null;
   }
@@ -103,7 +105,7 @@ class DatabaseService {
     return newEntry.id;
   }
 
-  async getUserLogEntry(userId: string, entryId: string): Promise<LogEntryModel> {
+  async getUserLogEntry(userId: string, entryId: string): Promise<LogEntryModel | null> {
     const userLogEntryRef = (await this.userLogEntriesCollection.doc(userId).collection('log_entries').doc(entryId).get());
     if (userLogEntryRef.exists) {
       return this.mapToLogEntryModel(userLogEntryRef.id, userLogEntryRef.data());
