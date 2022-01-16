@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header >
-      <ion-toolbar>
+      <ion-toolbar color="primary">
         <ion-buttons slot="start">
           <ion-back-button default-href="/app/timeline"></ion-back-button>
         </ion-buttons>
@@ -9,30 +9,39 @@
       </ion-toolbar>
     </ion-header>
     <ion-content padding>
+      <ion-row>
+        <ion-col size-md="6" offset-md="3" size-lg="4" offset-lg="4">
         <form novalidate>
           <ion-list lines="full" class="ion-no-margin">
-            <ion-item button @click="selectType" class="type-item">
+            <ion-item button class="input-item">
               <ion-label position="floating">Tipo</ion-label>
-              <ion-input :value="selectedTypeDefinition?.name"></ion-input>
-              <ion-icon v-if="selectedTypeDefinition" slot="end" :name="selectedTypeDefinition.icon"></ion-icon>
+              <ion-select v-model="selectedType" interface="action-sheet" :class="{'hide-caret': selectedTypeDefinition}">
+                <template v-for="t in types" :key="t.type">
+                  <ion-select-option :value="t.type">
+                    {{t.name}}
+                  </ion-select-option>
+                </template>
+              </ion-select>
+              <ion-icon slot="end" v-if="selectedTypeDefinition" :name="selectedTypeDefinition.icon" ></ion-icon>
             </ion-item>
-            <ion-item >
+            <ion-item class="input-item">
               <ion-label position="floating">Fecha</ion-label>
               <ion-input v-model="date" type="date"></ion-input>
             </ion-item>
-            <ion-item >
+            <ion-item class="input-item">
               <ion-label position="floating">Nombre</ion-label>
               <ion-input v-model="name"></ion-input>
+              <ion-icon slot="end" name="bookmark" ></ion-icon>
             </ion-item>
-            <ion-item >
+            <ion-item class="input-item">
               <ion-label position="floating">Plataforma</ion-label>
-              <ion-select v-if="selectedTypeDefinition" v-model="platform">
-                <template v-for="group in selectedTypeDefinition.platforms" :key="group.name">
+              <ion-select v-model="platform" interface="action-sheet">
+                <template v-for="group in selectedTypeDefinition?.platforms" :key="group.name">
                   <ion-select-option :value="platform.id" v-for="platform in group.platforms" :key="platform.id">{{platform.name}}</ion-select-option>
                 </template>
               </ion-select>
             </ion-item>
-            <ion-item>
+            <ion-item class="input-item">
               <ion-label position="floating">Valoración</ion-label>
               <ion-range v-model="rating" min="0.5" max="5" :step="0.5" snaps pin :pinFormatter="ratingPinFormatter">
                 <ion-icon size="small" slot="start" name="star"></ion-icon>
@@ -40,10 +49,11 @@
               </ion-range>
             </ion-item>
             <ion-item >
-              <ion-label position="floating">Crítica</ion-label>
-              <ion-textarea v-model="review" auto-grow></ion-textarea>
+              <ion-label position="floating">Crítica <template v-if="review">{{review.length}}</template></ion-label>
+              <ion-textarea v-model="review" auto-grow spellcheck></ion-textarea>
+              <ion-icon slot="end" name="heart"></ion-icon>
             </ion-item>
-            <ion-item >
+            <ion-item class="input-item">
               <file-upload
                   accept="image/*"
                   multiple
@@ -56,7 +66,6 @@
               <ion-icon slot="end" name="cloud-upload"></ion-icon>
             </ion-item>
             <ion-item >
-              <ion-label position="stacked">Preview</ion-label>
               <ion-thumbnail v-for="file in images" :key="file">
                 <img :src="file.blob" />
               </ion-thumbnail>
@@ -64,11 +73,20 @@
           </ion-list>
           
         </form>
+        </ion-col>
+      </ion-row>
     </ion-content>
     <ion-footer>
-      <ion-toolbar>
-        <ion-button @click="save()" full>Añadir</ion-button>
-      </ion-toolbar>
+      <ion-row>
+        <ion-col no-padding>
+            <ion-button :disabled="loading" expand="full" color="light" @click="back">Cancelar</ion-button>
+        </ion-col>
+        <ion-col no-padding>
+            <ion-button :disabled="loading" expand="full" color="primary" @click="save">
+              Añadir <ion-spinner v-if="loading"></ion-spinner>
+            </ion-button>
+        </ion-col>
+      </ion-row>
     </ion-footer>
   </ion-page>
 </template>
@@ -85,7 +103,6 @@ import {
     IonToolbar,
     IonButtons,
     IonTitle,
-    pickerController,
     IonItem,
     IonList,
     IonLabel,
@@ -96,14 +113,20 @@ import {
     IonSelectOption,
     IonTextarea,
     IonButton,
-    IonFooter
+    IonFooter,
+    IonThumbnail,
+    IonCol,
+    IonRow,
+    IonSpinner
 } from '@ionic/vue';
 import { computed, defineComponent, PropType, ref } from 'vue';
+import { useRouter } from 'vue-router';
 export default defineComponent({
     name: 'NewLogEntry',
     props: {
       type: {
-        type: Object as PropType<LogEntryType>
+        type: Object as PropType<LogEntryType>,
+        required: false,
       }
     },
     components: {
@@ -124,37 +147,18 @@ export default defineComponent({
       IonSelectOption,
       IonTextarea,
       IonButton,
-      IonFooter
+      IonFooter,
+      IonThumbnail,
+      IonCol,
+      IonRow,
+      IonSpinner
     },
     setup(props) {
+      const router = useRouter();
+      const loading = computed(() => UserLogEntriesStore.loading);
       const types = computed(() => Object.keys(LogEntryType).map(key => new LogEntryTypeDefinition(LogEntryType[key])));
-      const typesOptions = {
-        name: 'Type',
-        options: types.value.map(t => ({
-          text: t.name,
-          value: t.type
-        }))
-      };
       const selectedType = ref(props.type);
       const selectedTypeDefinition = computed(() => selectedType.value ? types.value.find(t => t.type === selectedType.value) : null);
-      const selectType = async () => {
-        const picker = await pickerController.create({
-          columns: [typesOptions],
-          buttons: [
-            {
-              text: "Cancelar",
-              role: "cancel",
-            },
-            {
-              text: "Seleccionar",
-              handler: (value) => {
-                selectedType.value = value['Type'].value;
-              },
-            },
-          ],
-        });
-        await picker.present();
-      };
       
 
       const formatDate = (date: Date) => {
@@ -211,34 +215,42 @@ export default defineComponent({
       }
     }
 
-      const save = async () => {
-        await UserLogEntriesStore.createNewUserLogEntry({
-          date: new Date(date.value),
-          type: selectedType.value,
-          name: name.value,
-          platform: platform.value,
-          rating: rating.value,
-          review: review.value,
-          images: [...images.value.map(image => image.file)],
-          externalId: null,
-        });
+    const back = () => {
+      router.back();
+    }
 
-      // if (result === true) {
-      //   this.clearForm();
-      //   this.$router.push('/home');
-      // } else {
-      //   this.logEntryError = result.toString();
-      // }
+    const save = async () => {
+      await UserLogEntriesStore.createNewUserLogEntry({
+        date: new Date(date.value),
+        type: selectedType.value,
+        name: name.value,
+        platform: platform.value,
+        rating: rating.value,
+        review: review.value,
+        images: [...images.value.map(image => image.file)],
+        externalId: null,
+      });
+
+    // if (result === true) {
+    //   this.clearForm();
+    //   this.$router.push('/home');
+    // } else {
+    //   this.logEntryError = result.toString();
+    // }
         
   }
 
-      return { types, selectedType, selectedTypeDefinition, date, maxDate, selectType, name, platform, review, rating, ratingPinFormatter, images, save, inputFilter };
+      return { types, selectedType, selectedTypeDefinition, date, maxDate, name, platform, review, rating, ratingPinFormatter, images, save, inputFilter, back, loading };
     },
 });
 </script>
 
 <style lang="css" scoped>
-  .type-item {
+  .input-item {
     align-items: center;
+  }
+
+  ion-select.hide-caret::part(icon) {
+    display: none;
   }
 </style>

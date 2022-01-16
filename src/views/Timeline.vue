@@ -3,12 +3,21 @@
     <ion-content fullscreen padding>
       <ion-title>Timeline</ion-title>
       
-      <template v-if="loading"> 
-        <log-entry-card v-for="i of [1,2,3,4,5]" :key="i"></log-entry-card>
-      </template>
-      <template v-else>
-        <log-entry-card v-for="logEntry in logEntries" :key="logEntry.id" :log-entry="logEntry"></log-entry-card>
-      </template>
+      
+        <template v-if="loading"> 
+          <ion-row>
+            <ion-col size="12" size-md="4" v-for="i of [1,2,3,4,5]" :key="i">
+              <log-entry-card ></log-entry-card>
+            </ion-col>
+          </ion-row>
+        </template>
+        <template v-else>
+          <ion-row v-for="logEntry in logEntries" :key="logEntry.id">
+            <ion-col size="12" size-md="6" offset-sm="3" size-lg="4" offset-lg="4" size-xl="2" offset-xl="5">
+              <log-entry-card  :log-entry="logEntry"></log-entry-card>
+            </ion-col>
+          </ion-row>
+        </template>
 
     </ion-content>
     <ion-fab vertical="bottom" horizontal="end">
@@ -31,7 +40,7 @@
         <ion-fab-button  @click="createNewLogEntry(LogEntryType.Book)">
           <ion-icon name="book"></ion-icon>
         </ion-fab-button>
-        <ion-fab-button  @click="createNewLogEntry">
+        <ion-fab-button  @click="createNewLogEntry()">
           <ion-icon name="ellipsis-horizontal"></ion-icon>
         </ion-fab-button>
       </ion-fab-list>
@@ -54,7 +63,13 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const logEntries = computed(() => UserLogEntriesStore.currentYearLogEntries);
-    const createNewLogEntry = (logEntryType: LogEntryType) => router.push('/new-log-entry/' + logEntryType);
+    const createNewLogEntry = (logEntryType?: LogEntryType) => {
+      if (logEntryType) {
+        router.push('/new-log-entry/' + logEntryType)
+      } else {
+        router.push('/new-log-entry');
+      }
+    };
     const loading = computed(() => UserLogEntriesStore.loading);
 
     return {

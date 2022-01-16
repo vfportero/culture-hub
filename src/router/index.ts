@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import UserStore from '@/store/modules/user';
 import { LogEntryType } from '@/models';
-const entryTypes = Object.keys(LogEntryType).map(key => LogEntryType[key]);
+const entryTypes = Object.keys(LogEntryType).map(key => LogEntryType[key]) as LogEntryType[];
 
 
 
@@ -55,14 +55,10 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: '/new-log-entry',
+    path: '/new-log-entry/:type?',
     name: 'new-log-entry',
     component: () => import("@/views/NewLogEntry.vue"),
-    children: entryTypes.map(type => ({
-      path: type,
-      name: `NewLogEntry_${type}`,
-      component: () => import("@/views/NewLogEntry.vue"),
-    })),
+    props: true,
   },
 ];
 

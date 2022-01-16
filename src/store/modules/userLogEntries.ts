@@ -76,7 +76,7 @@ class UserLogEntriesStore extends VuexModule {
 
     if (lastTweetId) {
       const tweetId = await TwitterService.notifyLogEntry(this.currentYearLogEntries.length, lastTweetId, logEntry, UserStore.user.twitterAccessToken, UserStore.user.twitterTokenSecret);
-      await databaseService.updateUserLogEntry(UserStore.user.uid, logEntry.uid, { tweetId });
+      await databaseService.updateUserLogEntry(UserStore.user.uid, logEntry.uid, { tweetId: tweetId });
       this.setUserLogEntryTweetId(logEntry.uid, tweetId);
     }
   }

@@ -74,7 +74,7 @@ class TwitterService {
     const needsMoreThanOneTweet = message.length > 280;
     let originalMessage = message;
     if (needsMoreThanOneTweet) {
-      message = this.truncate(message, 279);
+      message = this.truncate(message, 270);
       originalMessage = '…' + originalMessage.replace(message, '');
       message += '…';
       tweets.push(message);
