@@ -13,8 +13,8 @@
         </template>
         <template v-else>
           <ion-row v-for="logEntry in logEntries" :key="logEntry.id">
-            <ion-col size="12" size-md="6" offset-sm="3" size-lg="4" offset-lg="4" size-xl="2" offset-xl="5">
-              <log-entry-card  :log-entry="logEntry"></log-entry-card>
+            <ion-col size="12" size-md="6" offset-sm="3" size-lg="4" offset-lg="4" size-xl="4" offset-xl="4 ">
+              <log-entry-card :log-entry="logEntry"></log-entry-card>
             </ion-col>
           </ion-row>
         </template>
@@ -25,7 +25,7 @@
         <ion-icon name="add"></ion-icon>
       </ion-fab-button>
       <ion-fab-list side="top">
-        <ion-fab-button  @click="createNewLogEntry(LogEntryType.Movie)">
+        <ion-fab-button @click="createNewLogEntry(LogEntryType.Movie)">
           <ion-icon name="film"></ion-icon>
         </ion-fab-button>
         <ion-fab-button  @click="createNewLogEntry(LogEntryType.TvShow)">
@@ -55,7 +55,7 @@ import { defineComponent, computed } from 'vue';
 import UserLogEntriesStore from '@/store/modules/userLogEntries';
 import LogEntryCard from '@/components/LogEntryCard.vue';
 import { useRouter } from 'vue-router';
-import { LogEntryType } from '@/models';
+import { LogEntryType, UserLogEntriesLoadingStatus } from '@/models';
 
 export default defineComponent({
   name: 'HomePage',
@@ -70,7 +70,7 @@ export default defineComponent({
         router.push('/new-log-entry');
       }
     };
-    const loading = computed(() => UserLogEntriesStore.loading);
+    const loading = computed(() => UserLogEntriesStore.loadingStatus !== UserLogEntriesLoadingStatus.idle);
 
     return {
       logEntries,

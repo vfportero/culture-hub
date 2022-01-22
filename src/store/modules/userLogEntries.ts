@@ -1,11 +1,11 @@
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
 import store from '@/store';
-import { LogEntryModel, LogEntryType } from '@/models';
+import { LogEntryModel, LogEntryType, UserLogEntriesLoadingStatus } from '@/models';
 import { FirebaseStorage } from '@/services/firebase';
 import UserStore from './user';
 import databaseService from '@/services/firebase/databaseService';
 import TwitterService from '@/services/twitter';
-
+import { loadingController } from '@ionic/vue';
 
 @Module({
   namespaced: true,
@@ -15,26 +15,35 @@ import TwitterService from '@/services/twitter';
 })
 class UserLogEntriesStore extends VuexModule {
   currentYearLogEntries: LogEntryModel[] = [];
-  loading = false;
+  loadingStatus: UserLogEntriesLoadingStatus = UserLogEntriesLoadingStatus.idle;
 
   @Action
   async fetchCurrentYearUserLogEntries() {
     if (UserStore.user) {
-      this.setLoading(true);
+      this.setLoadingStatus(UserLogEntriesLoadingStatus.commuicatingWithServer);
       const userLogEntries = await databaseService.getYearUserLogEntries(UserStore.user.uid, new Date().getFullYear());
       this.setUserLogEntries(userLogEntries);
-      this.setLoading(false);
+      this.setLoadingStatus(UserLogEntriesLoadingStatus.idle);
     }
   }
 
   @Action
   async createNewUserLogEntry(payload: { date: Date; type: LogEntryType; name: string; platform: string; rating: number; review: string; images: File[]; externalId: string }): Promise<boolean | string> {
-    this.setLoading(true);
+    const loading = await loadingController
+      .create({
+        message: 'Creando nuevo registro...',
+      });
+        
+    await loading.present();
+    
+    this.setLoadingStatus(UserLogEntriesLoadingStatus.commuicatingWithServer);
     
     try {
       const newEntryId = await databaseService.createUserLogEntry(UserStore.user.uid, payload);
 
       if (payload.images?.length > 0) {
+        this.setLoadingStatus(UserLogEntriesLoadingStatus.uploadingMedia);
+        loading.message = 'Subiendo imágenes...';
         const storageRef = FirebaseStorage.ref();
         const imageUrls: string[] = [];
 
@@ -48,9 +57,15 @@ class UserLogEntriesStore extends VuexModule {
         await databaseService.updateUserLogEntry(UserStore.user.uid, newEntryId, { images: imageUrls });
       }
 
+      loading.message = 'Guardando registro...';
+      this.setLoadingStatus(UserLogEntriesLoadingStatus.commuicatingWithServer);
+
       const newEntry = await databaseService.getUserLogEntry(UserStore.user.uid, newEntryId);
 
+      this.setLoadingStatus(UserLogEntriesLoadingStatus.publishingTweet);
+      loading.message = 'Publicando tweets...';
       this.tweetUserLogEntry(newEntry);
+      this.setLoadingStatus(UserLogEntriesLoadingStatus.commuicatingWithServer);
 
       this.addUserLogEntry(await databaseService.getUserLogEntry(UserStore.user.uid, newEntryId));
     }
@@ -58,7 +73,9 @@ class UserLogEntriesStore extends VuexModule {
       return error.toString();
     }
     finally {
-      this.setLoading(false);
+      this.setLoadingStatus(UserLogEntriesLoadingStatus.idle);
+      loading.dismiss();
+
     }
 
     return true;
@@ -100,8 +117,8 @@ class UserLogEntriesStore extends VuexModule {
   }
 
   @Mutation
-  setLoading(loading: boolean) {
-    this.loading = loading;
+  setLoadingStatus(loading: UserLogEntriesLoadingStatus) {
+    this.loadingStatus = loading;
   }
 }
 

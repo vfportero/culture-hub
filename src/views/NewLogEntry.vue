@@ -15,7 +15,7 @@
           <ion-list lines="full" class="ion-no-margin">
             <ion-item button class="input-item">
               <ion-label position="floating">Tipo</ion-label>
-              <ion-select v-model="selectedType" interface="action-sheet" :class="{'hide-caret': selectedTypeDefinition}">
+              <ion-select v-model="selectedType" interface="action-sheet" cancel-text="Cancelar" :class="{'hide-caret': selectedTypeDefinition}">
                 <template v-for="t in types" :key="t.type">
                   <ion-select-option :value="t.type">
                     {{t.name}}
@@ -35,7 +35,7 @@
             </ion-item>
             <ion-item class="input-item">
               <ion-label position="floating">Plataforma</ion-label>
-              <ion-select v-model="platform" interface="action-sheet">
+              <ion-select v-model="platform" interface="action-sheet" cancel-text="Cancelar">
                 <template v-for="group in selectedTypeDefinition?.platforms" :key="group.name">
                   <ion-select-option :value="platform.id" v-for="platform in group.platforms" :key="platform.id">{{platform.name}}</ion-select-option>
                 </template>
@@ -92,7 +92,7 @@
 </template>
 
 <script lang="ts">
-import { LogEntryType, LogEntryTypeDefinition } from '@/models';
+import { LogEntryType, LogEntryTypeDefinition, UserLogEntriesLoadingStatus } from '@/models';
 import UserLogEntriesStore from '@/store/modules/userLogEntries';
 
 import {
@@ -155,7 +155,7 @@ export default defineComponent({
     },
     setup(props) {
       const router = useRouter();
-      const loading = computed(() => UserLogEntriesStore.loading);
+      const loading = computed(() => UserLogEntriesStore.loadingStatus !== UserLogEntriesLoadingStatus.idle);
       const types = computed(() => Object.keys(LogEntryType).map(key => new LogEntryTypeDefinition(LogEntryType[key])));
       const selectedType = ref(props.type);
       const selectedTypeDefinition = computed(() => selectedType.value ? types.value.find(t => t.type === selectedType.value) : null);
@@ -178,7 +178,6 @@ export default defineComponent({
       const images = ref([]);
 
       const ratingPinFormatter = (value: number) : number => value;
-
       const inputFilter = (newFile, oldFile, prevent) => {
       if (newFile && !oldFile) {
         // Add file
@@ -213,32 +212,40 @@ export default defineComponent({
         // Refused to remove the file
         // return prevent()
       }
+      }
+
+      const back = () => {
+        router.back();
+      }
+
+      const clearForm = () => {
+        name.value = '';
+        platform.value = '';
+        review.value = '';
+        rating.value = 0;
+        images.value = [];
+        date.value = formatDate(new Date());
+        selectedType.value = null;
+      }
+
+      const save = async () => {
+        const result = await UserLogEntriesStore.createNewUserLogEntry({
+          date: new Date(date.value),
+          type: selectedType.value,
+          name: name.value,
+          platform: platform.value,
+          rating: rating.value,
+          review: review.value,
+          images: [...images.value.map(image => image.file)],
+          externalId: null,
+        });
+
+        if (result === true) {
+          clearForm();
+          router.push('/app/timeline');
+        }
+          
     }
-
-    const back = () => {
-      router.back();
-    }
-
-    const save = async () => {
-      await UserLogEntriesStore.createNewUserLogEntry({
-        date: new Date(date.value),
-        type: selectedType.value,
-        name: name.value,
-        platform: platform.value,
-        rating: rating.value,
-        review: review.value,
-        images: [...images.value.map(image => image.file)],
-        externalId: null,
-      });
-
-    // if (result === true) {
-    //   this.clearForm();
-    //   this.$router.push('/home');
-    // } else {
-    //   this.logEntryError = result.toString();
-    // }
-        
-  }
 
       return { types, selectedType, selectedTypeDefinition, date, maxDate, name, platform, review, rating, ratingPinFormatter, images, save, inputFilter, back, loading };
     },

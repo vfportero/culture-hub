@@ -34,6 +34,14 @@ export enum LogEntryType {
   Podcasts = 'podcasts',
 }
 
+export enum UserLogEntriesLoadingStatus {
+  idle,
+  commuicatingWithServer,
+  uploadingMedia,
+  publishingTweet,
+  
+}
+
 export {
   LogEntryTypeDefinition,
 };

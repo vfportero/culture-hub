@@ -10,7 +10,6 @@
       <ion-card-content>
         {{logEntry.review}}
       </ion-card-content>
-      <ion-button fill="outline" @click="tweet">Tweet</ion-button>
     </template>
     <template v-else>
       <ion-thumbnail class="img-skeleton">
@@ -34,11 +33,11 @@
 <script lang="ts">
 import { LogEntryModel } from '@/models';
 import userLogEntries from '@/store/modules/userLogEntries';
-import { IonCard, IonImg, IonCardHeader, IonThumbnail, IonButton, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent } from '@ionic/vue';
+import { IonCard, IonImg, IonCardHeader, IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent } from '@ionic/vue';
 import { defineComponent, PropType } from 'vue';
 export default defineComponent({
   name: 'LogEntryCard',
-  components: {  IonCard, IonImg, IonCardHeader,IonThumbnail,IonButton, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent },
+  components: {  IonCard, IonImg, IonCardHeader,IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent },
   props: {
     logEntry: Object as PropType<LogEntryModel>
   },
