@@ -1,6 +1,6 @@
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
 import store from '@/store';
-import { LogEntryModel, LogEntryType, UserLogEntriesLoadingStatus } from '@/models';
+import { LogEntryModel, LogEntryType, Platform, UserLogEntriesLoadingStatus } from '@/models';
 import { FirebaseStorage } from '@/services/firebase';
 import UserStore from './user';
 import databaseService from '@/services/firebase/databaseService';
@@ -28,7 +28,7 @@ class UserLogEntriesStore extends VuexModule {
   }
 
   @Action
-  async createNewUserLogEntry(payload: { date: Date; type: LogEntryType; name: string; platform: string; rating: number; review: string; images: File[]; externalId: string }): Promise<boolean | string> {
+  async createNewUserLogEntry(payload: { date: Date; type: LogEntryType; name: string; platform: Platform; rating: number; review: string; images: File[]; externalId: string }): Promise<boolean | string> {
     const loading = await loadingController
       .create({
         message: 'Creando nuevo registro...',

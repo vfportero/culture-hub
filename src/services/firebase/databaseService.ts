@@ -1,4 +1,4 @@
-import { LogEntryModel, LogEntryType, LogEntryTypeDefinition, UserModel } from '@/models';
+import { LogEntryModel, LogEntryType, LogEntryTypeDefinition, Platform, UserModel } from '@/models';
 import { FirebaseDatabase } from '.';
 import { LogEntry, User } from '@/models/domain';
 import { firestore } from 'firebase';
@@ -86,7 +86,7 @@ class DatabaseService {
     };
   }
 
-  async createUserLogEntry(userId: string, payload: { date: Date; type: LogEntryType; name: string; platform: string; rating: number; review: string; externalId: string }): Promise<string> {
+  async createUserLogEntry(userId: string, payload: { date: Date; type: LogEntryType; name: string; platform: Platform; rating: number; review: string; externalId: string }): Promise<string> {
     const now = new Date();
     const newLogEntry: LogEntry = {
       createdDate: now,

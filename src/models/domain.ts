@@ -1,4 +1,4 @@
-import { LogEntryType } from '.';
+import { LogEntryType, Platform } from '.';
 
 export interface User {
   displayName: string;
@@ -16,7 +16,7 @@ export interface LogEntry {
   date: Date;
   type: LogEntryType;
   name: string;
-  platform: string;
+  platform: Platform;
   rating: number;
   review: string;
   images?: string[];

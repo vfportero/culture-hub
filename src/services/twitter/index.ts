@@ -1,4 +1,4 @@
-import { LogEntryModel, LogEntryType } from '@/models';
+import { LogEntryModel, LogEntryType, PlatformNames } from '@/models';
 import axios from 'axios';
 
 class TwitterService {
@@ -65,7 +65,7 @@ class TwitterService {
         break;
     }
 
-    message += ` ${logEntry.typeDefinition.getPlatformName(logEntry.platform)}`;
+    message += ` ${PlatformNames[logEntry.platform]}`;
 
     return message;
   }

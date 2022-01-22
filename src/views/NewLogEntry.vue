@@ -36,9 +36,10 @@
             <ion-item class="input-item">
               <ion-label position="floating">Plataforma</ion-label>
               <ion-select v-model="platform" interface="action-sheet" cancel-text="Cancelar">
-                <template v-for="group in selectedTypeDefinition?.platforms" :key="group.name">
-                  <ion-select-option :value="platform.id" v-for="platform in group.platforms" :key="platform.id">{{platform.name}}</ion-select-option>
-                </template>
+                  <ion-select-option :value="platform" v-for="platform in selectedTypeDefinition?.platforms" :key="platform">
+                    <img class="platform--icon" :src="'/assets/icon/' + platform + '.svg'">
+                    {{PlatformNames[platform]}}
+                  </ion-select-option>
               </ion-select>
             </ion-item>
             <ion-item class="input-item">
@@ -92,7 +93,7 @@
 </template>
 
 <script lang="ts">
-import { LogEntryType, LogEntryTypeDefinition, UserLogEntriesLoadingStatus } from '@/models';
+import { LogEntryType, LogEntryTypeDefinition, UserLogEntriesLoadingStatus, PlatformNames } from '@/models';
 import UserLogEntriesStore from '@/store/modules/userLogEntries';
 
 import {
@@ -172,7 +173,7 @@ export default defineComponent({
       const maxDate = date;
 
       const name = ref('');
-      const platform = ref('');
+      const platform = ref();
       const review = ref('');
       const rating = ref();
       const images = ref([]);
@@ -220,7 +221,7 @@ export default defineComponent({
 
       const clearForm = () => {
         name.value = '';
-        platform.value = '';
+        platform.value = null;
         review.value = '';
         rating.value = 0;
         images.value = [];
@@ -247,7 +248,7 @@ export default defineComponent({
           
     }
 
-      return { types, selectedType, selectedTypeDefinition, date, maxDate, name, platform, review, rating, ratingPinFormatter, images, save, inputFilter, back, loading };
+      return { PlatformNames, types, selectedType, selectedTypeDefinition, date, maxDate, name, platform, review, rating, ratingPinFormatter, images, save, inputFilter, back, loading };
     },
 });
 </script>

@@ -4,3 +4,6 @@
 
 
 TODO: More info at: https://twitter.com/vfportero/status/1477692530372362240
+
+### Attributions
+CMetalCore, Public domain, via Wikimedia Commons
