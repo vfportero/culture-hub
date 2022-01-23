@@ -125,7 +125,7 @@ export const PlatformNames: Record <Platform, string> = {
 
 export enum UserLogEntriesLoadingStatus {
   idle,
-  commuicatingWithServer,
+  communicatingWithServer,
   uploadingMedia,
   publishingTweet,
   

@@ -10,11 +10,31 @@
 
       <ion-card-content>
         {{ logEntry.review }}
-        <br/>
-        <div class="platform" v-if="showPlatformInfo">
-          <img class="platform--icon" :src="'/assets/icon/' + logEntry.platform + '.svg'"> 
-        </div>
       </ion-card-content>
+      <ion-item>
+        <img class="platform--icon" :src="'/assets/icon/' + logEntry.platform + '.svg'" v-if="showPlatformInfo" slot="start"> 
+        <ion-button slot="end" fill="clear" :id="'open-share-social-' + logEntry.uid">
+          <ion-icon slot="icon-only" name="share-social"></ion-icon>
+        </ion-button>
+        <ion-popover :trigger="'open-share-social-' + logEntry.uid">
+          <ion-content>
+            <ion-list>
+              <ion-item button :detail="false" @click="twitterShare">
+                <ion-icon name="logo-twitter" slot="start"></ion-icon>
+                <ion-label >
+                  <template v-if="logEntry.tweetId">
+                    Compartido en Twitter
+                  </template>
+                  <template v-else>
+                    Compartir en Twitter
+                  </template>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ion-popover>
+
+      </ion-item>
     </template>
     <template v-else>
       <ion-thumbnail class="img-skeleton">
@@ -37,11 +57,12 @@
 
 <script lang="ts">
 import { LogEntryModel, LogEntryType } from '@/models';
-import { IonCard, IonImg, IonCardHeader, IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent } from '@ionic/vue';
+import userLogEntries from '@/store/modules/userLogEntries';
+import { IonLabel, IonList, IonContent, IonItem, IonButton, IonPopover, IonCard, IonImg, IonCardHeader, IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent } from '@ionic/vue';
 import { computed, defineComponent, PropType } from 'vue';
 export default defineComponent({
   name: 'LogEntryCard',
-  components: {  IonCard, IonImg, IonCardHeader,IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent },
+  components: { IonLabel, IonList, IonContent, IonItem, IonButton, IonPopover, IonCard, IonImg, IonCardHeader,IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent },
   props: {
     logEntry: Object as PropType<LogEntryModel>
   },
@@ -71,10 +92,19 @@ export default defineComponent({
       }
     });
 
+    const twitterShare = async() => {
+      if (!props.logEntry.tweetId) {
+        await userLogEntries.tweetUserLogEntry(props.logEntry);
+      } else {
+        window.open(`https://twitter.com/i/web/status/${props.logEntry.tweetId}`, '_blank');
+      }
+    };
+
     return {
       getEntryDate,
       ratingDisplay,
-      showPlatformInfo
+      showPlatformInfo,
+      twitterShare
     }
   }
 });
@@ -86,13 +116,7 @@ export default defineComponent({
     height: 200px;
   }
 
-  .platform {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
-  }
-
-  .platform .platform--icon {
+  .platform--icon {
     height: 32px;
     margin-right: 8px;
   }
