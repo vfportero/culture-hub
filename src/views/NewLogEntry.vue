@@ -118,9 +118,11 @@ import {
     IonThumbnail,
     IonCol,
     IonRow,
-    IonSpinner
+    IonSpinner,
+    loadingController,
+    toastController 
 } from '@ionic/vue';
-import { computed, defineComponent, PropType, ref } from 'vue';
+import { computed, defineComponent, PropType, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 export default defineComponent({
     name: 'NewLogEntry',
@@ -180,39 +182,39 @@ export default defineComponent({
 
       const ratingPinFormatter = (value: number) : number => value;
       const inputFilter = (newFile, oldFile, prevent) => {
-      if (newFile && !oldFile) {
-        // Add file
+        if (newFile && !oldFile) {
+          // Add file
 
-        // Filter non-image file
-        // Will not be added to files
-        if (!/\.(jpeg|jpe|jpg|gif|png|webp)$/i.test(newFile.name)) {
-          return prevent()
+          // Filter non-image file
+          // Will not be added to files
+          if (!/\.(jpeg|jpe|jpg|gif|png|webp)$/i.test(newFile.name)) {
+            return prevent()
+          }
+
+          // Create the 'blob' field for thumbnail preview
+          newFile.blob = ''
+          let URL = window.URL || window.webkitURL
+          if (URL && URL.createObjectURL) {
+            newFile.blob = URL.createObjectURL(newFile.file)
+          }
         }
 
-        // Create the 'blob' field for thumbnail preview
-        newFile.blob = ''
-        let URL = window.URL || window.webkitURL
-        if (URL && URL.createObjectURL) {
-          newFile.blob = URL.createObjectURL(newFile.file)
+        if (newFile && oldFile) {
+          // Update file
+
+          // Increase the version number
+          if (!newFile.version) {
+            newFile.version = 0
+          }
+          newFile.version++
         }
-      }
 
-      if (newFile && oldFile) {
-        // Update file
+        if (!newFile && oldFile) {
+          // Remove file
 
-        // Increase the version number
-        if (!newFile.version) {
-          newFile.version = 0
+          // Refused to remove the file
+          // return prevent()
         }
-        newFile.version++
-      }
-
-      if (!newFile && oldFile) {
-        // Remove file
-
-        // Refused to remove the file
-        // return prevent()
-      }
       }
 
       const back = () => {
@@ -230,22 +232,66 @@ export default defineComponent({
       }
 
       const save = async () => {
-        const result = await UserLogEntriesStore.createNewUserLogEntry({
-          date: new Date(date.value),
-          type: selectedType.value,
-          name: name.value,
-          platform: platform.value,
-          rating: rating.value,
-          review: review.value,
-          images: [...images.value.map(image => image.file)],
-          externalId: null,
-        });
+        const loading = await loadingController
+          .create({
+            message: 'Creando nuevo registro...',
+          });
+        await loading.present();
 
-        if (result === true) {
-          clearForm();
-          router.push('/app/timeline');
+        const saveStatusWatcherStop = watch(
+          () => UserLogEntriesStore.loadingStatus,
+          ((saveStatusValue) => {
+            switch (saveStatusValue) {
+              case UserLogEntriesLoadingStatus.uploadingMedia:
+                loading.message = 'Subiendo imágenes...';
+                break;
+              case UserLogEntriesLoadingStatus.publishingTweet:
+                loading.message = 'Publicando tweets...';
+                break;
+              case UserLogEntriesLoadingStatus.communicatingWithServer:
+                loading.message = 'Creando nuevo registro...';
+                break;
+            }
+          }));
+
+        try {
+          const result = await UserLogEntriesStore.createNewUserLogEntry({
+            date: new Date(date.value),
+            type: selectedType.value,
+            name: name.value,
+            platform: platform.value,
+            rating: rating.value,
+            review: review.value,
+            images: [...images.value.map(image => image.file)],
+            externalId: null,
+          });
+
+          if (result === true) {
+            clearForm();
+            router.push('/app/timeline');
+            const toast = await toastController
+              .create({
+                message: 'Registro creado correctamente',
+                duration: 3000,
+                color: 'success',
+              });
+            await toast.present();
+          }
         }
-          
+        catch (error) {
+          const toast = await toastController
+              .create({
+                message: error,
+                duration: 3000,
+                color: 'danger',
+              });
+            await toast.present();
+        }
+        finally {
+          saveStatusWatcherStop();
+          loading.dismiss();
+        }
+ 
     }
 
       return { PlatformNames, types, selectedType, selectedTypeDefinition, date, maxDate, name, platform, review, rating, ratingPinFormatter, images, save, inputFilter, back, loading };

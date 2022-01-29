@@ -5,7 +5,6 @@ import { FirebaseStorage } from '@/services/firebase';
 import UserStore from './user';
 import databaseService from '@/services/firebase/databaseService';
 import TwitterService from '@/services/twitter';
-import { loadingController } from '@ionic/vue';
 
 @Module({
   namespaced: true,
@@ -28,14 +27,7 @@ class UserLogEntriesStore extends VuexModule {
   }
 
   @Action
-  async createNewUserLogEntry(payload: { date: Date; type: LogEntryType; name: string; platform: Platform; rating: number; review: string; images: File[]; externalId: string }): Promise<boolean | string> {
-    const loading = await loadingController
-      .create({
-        message: 'Creando nuevo registro...',
-      });
-        
-    await loading.present();
-    
+  async createNewUserLogEntry(payload: { date: Date; type: LogEntryType; name: string; platform: Platform; rating: number; review: string; images: File[]; externalId: string }): Promise<boolean | string> {    
     this.setLoadingStatus(UserLogEntriesLoadingStatus.communicatingWithServer);
     
     try {
@@ -43,7 +35,6 @@ class UserLogEntriesStore extends VuexModule {
 
       if (payload.images?.length > 0) {
         this.setLoadingStatus(UserLogEntriesLoadingStatus.uploadingMedia);
-        loading.message = 'Subiendo imágenes...';
         const storageRef = FirebaseStorage.ref();
         const imageUrls: string[] = [];
 
@@ -57,12 +48,12 @@ class UserLogEntriesStore extends VuexModule {
         await databaseService.updateUserLogEntry(UserStore.user.uid, newEntryId, { images: imageUrls });
       }
 
-      loading.message = 'Guardando registro...';
+      
       this.setLoadingStatus(UserLogEntriesLoadingStatus.communicatingWithServer);
 
       const newEntry = await databaseService.getUserLogEntry(UserStore.user.uid, newEntryId);
 
-      loading.message = 'Publicando tweets...';
+      
       await this.tweetUserLogEntry(newEntry);
 
       this.addUserLogEntry(await databaseService.getUserLogEntry(UserStore.user.uid, newEntryId));
@@ -72,7 +63,6 @@ class UserLogEntriesStore extends VuexModule {
     }
     finally {
       this.setLoadingStatus(UserLogEntriesLoadingStatus.idle);
-      loading.dismiss();
 
     }
 

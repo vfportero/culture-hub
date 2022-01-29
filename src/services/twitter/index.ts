@@ -93,7 +93,7 @@ class TwitterService {
       accessSecret,
     });
 
-    return newTweetResponse.data.toString();
+    return newTweetResponse.data.tweetId;
   }
 
   private truncate(str: string, n: number ){
