@@ -1,9 +1,9 @@
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
 import store from '@/store';
 import { LogEntryModel, LogEntryType, Platform, UserLogEntriesLoadingStatus } from '@/models';
-import { FirebaseStorage } from '@/services/firebase';
 import UserStore from './user';
 import databaseService from '@/services/firebase/databaseService';
+import storageService from '@/services/firebase/storageService';
 import TwitterService from '@/services/twitter';
 
 @Module({
@@ -35,24 +35,13 @@ class UserLogEntriesStore extends VuexModule {
 
       if (payload.images?.length > 0) {
         this.setLoadingStatus(UserLogEntriesLoadingStatus.uploadingMedia);
-        const storageRef = FirebaseStorage.ref();
-        const imageUrls: string[] = [];
-
-        for (const image of Array.from(payload.images)) {
-          const result = await storageRef.child(`${newEntryId}/${image.name}`).put(image);
-          if (result.state === 'success') {
-            imageUrls.push(await result.ref.getDownloadURL());
-          }
-        }
-
+        const imageUrls =  await storageService.updloadFiles(payload.images, newEntryId);
         await databaseService.updateUserLogEntry(UserStore.user.uid, newEntryId, { images: imageUrls });
       }
 
-      
       this.setLoadingStatus(UserLogEntriesLoadingStatus.communicatingWithServer);
 
       const newEntry = await databaseService.getUserLogEntry(UserStore.user.uid, newEntryId);
-
       
       await this.tweetUserLogEntry(newEntry);
 
