@@ -1,7 +1,12 @@
 <template>
   <ion-card>
-    <template v-if="logEntry">
-      <ion-img :src="logEntry.images[0]" :alt="logEntry.name"></ion-img>
+    <template v-if="logEntry">      
+      <ion-slides pager v-if="logEntry.images.length > 1">
+        <ion-slide v-for="image in logEntry.images" :key="image">
+          <ion-img :src="image" :alt="logEntry.name"></ion-img>
+        </ion-slide>
+      </ion-slides>
+      <ion-img v-else :src="logEntry.images[0]" :alt="logEntry.name"></ion-img>
       <ion-card-header>
         <ion-card-subtitle>{{getEntryDate(logEntry)}}</ion-card-subtitle>
         <ion-card-title>
@@ -56,15 +61,14 @@
 </template>
 
 <script lang="ts">
-import { LogEntryModel, LogEntryType, UserLogEntriesLoadingStatus } from '@/models';
+import { LogEntryModel, LogEntryType } from '@/models';
 import userLogEntries from '@/store/modules/userLogEntries';
-import { IonLabel, IonList, IonContent, IonItem, IonButton, IonPopover, IonCard, IonImg, IonCardHeader, IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent, loadingController, toastController } from '@ionic/vue';
-import { computed, defineComponent, PropType, watch } from 'vue';
-import UserLogEntriesStore from '@/store/modules/userLogEntries';
+import { IonLabel, IonList, IonContent, IonItem, IonButton, IonPopover, IonCard, IonImg, IonCardHeader, IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent, loadingController, toastController, IonSlides, IonSlide } from '@ionic/vue';
+import { computed, defineComponent, PropType } from 'vue';
 
 export default defineComponent({
   name: 'LogEntryCard',
-  components: { IonLabel, IonList, IonContent, IonItem, IonButton, IonPopover, IonCard, IonImg, IonCardHeader,IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent },
+  components: { IonLabel, IonList, IonContent, IonItem, IonButton, IonPopover, IonCard, IonImg, IonCardHeader,IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent, IonSlides, IonSlide },
   props: {
     logEntry: Object as PropType<LogEntryModel>
   },
@@ -129,6 +133,7 @@ export default defineComponent({
         window.open(`https://twitter.com/i/web/status/${props.logEntry.tweetId}`, '_blank');
       }
     };
+
 
     return {
       getEntryDate,
