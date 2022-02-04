@@ -56,10 +56,12 @@
 </template>
 
 <script lang="ts">
-import { LogEntryModel, LogEntryType } from '@/models';
+import { LogEntryModel, LogEntryType, UserLogEntriesLoadingStatus } from '@/models';
 import userLogEntries from '@/store/modules/userLogEntries';
-import { IonLabel, IonList, IonContent, IonItem, IonButton, IonPopover, IonCard, IonImg, IonCardHeader, IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent } from '@ionic/vue';
-import { computed, defineComponent, PropType } from 'vue';
+import { IonLabel, IonList, IonContent, IonItem, IonButton, IonPopover, IonCard, IonImg, IonCardHeader, IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent, loadingController, toastController } from '@ionic/vue';
+import { computed, defineComponent, PropType, watch } from 'vue';
+import UserLogEntriesStore from '@/store/modules/userLogEntries';
+
 export default defineComponent({
   name: 'LogEntryCard',
   components: { IonLabel, IonList, IonContent, IonItem, IonButton, IonPopover, IonCard, IonImg, IonCardHeader,IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent },
@@ -94,7 +96,35 @@ export default defineComponent({
 
     const twitterShare = async() => {
       if (!props.logEntry.tweetId) {
-        await userLogEntries.tweetUserLogEntry(props.logEntry);
+        const loading = await loadingController
+          .create({
+            message: 'Publicando tweets...',
+          });
+        await loading.present();
+        try {
+          await userLogEntries.tweetUserLogEntry(props.logEntry);
+        }
+        catch (error) {
+          const toast = await toastController
+              .create({
+                message: error,
+                duration: 3000,
+                color: 'danger',
+              });
+            await toast.present();
+        }
+        finally {
+          await loading.dismiss();
+          const toast = await toastController
+              .create({
+                message: 'Tweets publicados correctamente',
+                duration: 3000,
+                color: 'success',
+              });
+            await toast.present();
+        }
+        
+
       } else {
         window.open(`https://twitter.com/i/web/status/${props.logEntry.tweetId}`, '_blank');
       }

@@ -70,7 +70,7 @@ export default defineComponent({
         router.push('/new-log-entry');
       }
     };
-    const loading = computed(() => UserLogEntriesStore.loadingStatus !== UserLogEntriesLoadingStatus.idle);
+    const loading = computed(() => UserLogEntriesStore.loadingStatus === UserLogEntriesLoadingStatus.communicatingWithServer);
 
     return {
       logEntries,

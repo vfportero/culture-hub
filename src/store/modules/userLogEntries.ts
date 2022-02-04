@@ -89,6 +89,8 @@ class UserLogEntriesStore extends VuexModule {
       await databaseService.updateUserLogEntry(UserStore.user.uid, logEntry.uid, { tweetId });
       this.setUserLogEntryTweetId(logEntry.uid, tweetId);
 
+      this.setLoadingStatus(UserLogEntriesLoadingStatus.idle);
+
       return tweetId;
     }
 
