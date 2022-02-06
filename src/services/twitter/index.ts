@@ -3,6 +3,10 @@ import axios from 'axios';
 
 class TwitterService {
 
+  goToTweet(username: string, tweetId: string) {
+    window.open(`https://twitter.com/${username}/status/${tweetId}`, '_blank');
+  }
+
   async notifyLogEntry(yearCount: number, replyTo: string, logEntry: LogEntryModel, accessToken: string, accessSecret: string): Promise<string> {
     const message = this.composeMessage(yearCount, logEntry);
     const tweets = this.truncateMessageInTweets(message, []);

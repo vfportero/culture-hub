@@ -43,6 +43,7 @@ class UserStore extends VuexModule {
             authResult.user.photoURL ?? authResult.additionalUserInfo.profile['profile_image_url_https'],
             twitterCredentials['oauthAccessToken'],
             twitterCredentials['oauthTokenSecret'],
+            authResult.additionalUserInfo.username
           );
         }
         else {

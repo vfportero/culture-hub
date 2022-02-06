@@ -65,6 +65,8 @@
 <script lang="ts">
 import { LogEntryModel, LogEntryType } from '@/models';
 import userLogEntries from '@/store/modules/userLogEntries';
+import userStore from '@/store/modules/user';
+import twitterService from '@/services/twitter';
 import { IonLabel, IonList, IonContent, IonItem, IonButton, IonPopover, IonCard, IonImg, IonCardHeader, IonThumbnail, IonSkeletonText, IonCardSubtitle, IonCardTitle, IonIcon, IonCardContent, loadingController, toastController, IonSlides, IonSlide } from '@ionic/vue';
 import { computed, defineComponent, PropType } from 'vue';
 
@@ -136,7 +138,7 @@ export default defineComponent({
         
 
       } else {
-        window.open(`https://twitter.com/i/web/status/${props.logEntry.tweetId}`, '_blank');
+        twitterService.goToTweet(userStore.user.integrations.twitter.username, props.logEntry.tweetId);
       }
     };
 

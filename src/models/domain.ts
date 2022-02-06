@@ -11,6 +11,7 @@ export interface User {
 export interface UserIntegrations {
   twitter: {
     enabled: boolean;
+    username: string;
     accessToken: string;
     tokenSecret: string;
   } 

@@ -27,7 +27,7 @@ class DatabaseService {
     return null;
   }
 
-  async createUser(uid: string, email: string, displayName: string, avatar: string, twitterAccessToken: string, twitterTokenSecret: string) {
+  async createUser(uid: string, email: string, displayName: string, avatar: string, twitterAccessToken: string, twitterTokenSecret: string, twitterUserName: string) {
     const user: User = {
       displayName: displayName,
       email: email ?? '',
@@ -36,6 +36,7 @@ class DatabaseService {
       integrations: {
         twitter: {
           enabled: true,
+          username: twitterUserName,
           accessToken: twitterAccessToken,
           tokenSecret: twitterTokenSecret,
         }
