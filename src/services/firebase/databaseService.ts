@@ -2,6 +2,7 @@ import { LogEntryModel, LogEntryType, LogEntryTypeDefinition, Platform, UserMode
 import { FirebaseDatabase } from '.';
 import { LogEntry, User } from '@/models/domain';
 import { firestore } from 'firebase';
+import storageService from './storageService';
 
 class DatabaseService {
 
@@ -46,19 +47,20 @@ class DatabaseService {
   async getYearUserLogEntries(userId: string, year: number): Promise<LogEntryModel[]> {
     const userLogEntries = await this.userLogEntriesCollection.doc(userId).collection('log_entries').where('year', '==', year).orderBy('date', 'desc').orderBy('createdDate', 'desc').get();
 
-    return await userLogEntries.docs.map(doc => {
-      return this.mapToLogEntryModel(doc.id, doc.data());
-    });
+    return await Promise.all(
+      userLogEntries.docs.map(async (doc) => {
+        return await this.mapToLogEntryModel(doc.id, doc.data())
+      })
+    );
   }
 
-  async getUserLogEntries(userId: string): Promise<LogEntryModel[]> {
-    const userLogEntries = await this.userLogEntriesCollection.doc(userId).collection('log_entries').orderBy('date', 'desc').orderBy('createdDate', 'desc').get();
-    return await userLogEntries.docs.map(doc => {
-      return this.mapToLogEntryModel(doc.id, doc.data());
-    });
-  }
 
-  mapToLogEntryModel(uid: string, docData: firestore.DocumentData): LogEntryModel {
+  async mapToLogEntryModel(uid: string, docData: firestore.DocumentData): Promise<LogEntryModel> {
+    const images = await Promise.all(
+      docData.images.map(async (image) => {
+        return await storageService.getPublicUrl(image);
+      })
+    );
     return {
       type: docData.type,
       name: docData.name,
@@ -66,7 +68,7 @@ class DatabaseService {
       rating: docData.rating,
       review: docData.review,
       externalId: docData.externalId,
-      images: docData.images,
+      images: images,
       typeDefinition: new LogEntryTypeDefinition(docData.type),
       uid: uid,
       date: new Date(docData.date.seconds * 1000),
@@ -76,6 +78,7 @@ class DatabaseService {
       tweetId: docData.tweetId,
     };
   }
+
 
   async createUserLogEntry(userId: string, payload: { date: Date; type: LogEntryType; name: string; platform: Platform; rating: number; review: string; externalId: string }): Promise<string> {
     const now = new Date();

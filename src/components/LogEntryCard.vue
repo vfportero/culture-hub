@@ -19,7 +19,7 @@
         {{ logEntry.review }}
       </ion-card-content>
       <ion-item>
-        <img class="platform--icon" :src="'/assets/icon/' + logEntry.platform + '.svg'" v-if="showPlatformInfo" slot="start"> 
+        <img class="platform--icon" :src="getPlatformIcon(logEntry)" v-if="showPlatformInfo" slot="start"> 
         <ion-button slot="end" fill="clear" :id="'open-share-social-' + logEntry.uid">
           <ion-icon slot="icon-only" name="share-social"></ion-icon>
         </ion-button>
@@ -77,6 +77,10 @@ export default defineComponent({
   setup(props) {
     const getEntryDate = (entry: LogEntryModel) => {
       return entry.date.toLocaleString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+    };
+
+    const getPlatformIcon = (entry: LogEntryModel) => {
+      return `/assets/icon/${entry.platform.toLowerCase()}.svg`;
     };
 
     const ratingDisplay = computed(() => {
@@ -141,7 +145,8 @@ export default defineComponent({
       getEntryDate,
       ratingDisplay,
       showPlatformInfo,
-      twitterShare
+      twitterShare,
+      getPlatformIcon
     }
   }
 });

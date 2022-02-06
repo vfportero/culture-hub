@@ -2,8 +2,9 @@ import { FirebaseStorage } from ".";
 import Compressor from 'compressorjs';
 
 class StorageService {
+  storageRef = FirebaseStorage.ref();
 
-  compressImage(file: File): Promise<File> {
+  public compressImage(file: File): Promise<File> {
     return new Promise<File>((resolve, reject) => {
         new Compressor(file, {
           quality: 0.6,
@@ -17,8 +18,8 @@ class StorageService {
 }
 
    
-  async updloadFiles(files: File[], folder: string): Promise<string[]> {
-    const storageRef = FirebaseStorage.ref();
+  public async updloadFiles(files: File[], folder: string): Promise<string[]> {
+    
     const fileUrls: string[] = [];
 
     for (let file of files) {
@@ -27,14 +28,18 @@ class StorageService {
         file = await this.compressImage(file);    
       }
 
-      const result = await storageRef.child(`${folder}/${file.name}`).put(file);
+      const result = await this.storageRef.child(`${folder}/${file.name}`).put(file);
       if (result.state === 'success') {
-        fileUrls.push(await result.ref.getDownloadURL());
+        fileUrls.push(result.ref.fullPath);
       }
 
     }
 
     return fileUrls;
+  }
+
+  public async getPublicUrl(filePath: string): Promise<string> {
+    return await this.storageRef.child(filePath).getDownloadURL();
   }
 }
 
