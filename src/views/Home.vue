@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header translucent>
       <ion-toolbar>
-        <ion-title>Culture Hub</ion-title>
+        <ion-title>La CulturetApp</ion-title>
         <user-menu></user-menu>
       </ion-toolbar>
     </ion-header>

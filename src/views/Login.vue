@@ -58,7 +58,6 @@ export default defineComponent({
             const loginResult = await UserStore.loginWithTwitter();
             if (loginResult === true) {
                 router.replace('/');
-                loadingIndicator.dismiss();
             }
             else {
                 (await toastController
@@ -67,6 +66,7 @@ export default defineComponent({
                     duration: 2000
                 })).present();
             }
+            loadingIndicator.dismiss();
         };
         return { doTwitterLogin };
     },

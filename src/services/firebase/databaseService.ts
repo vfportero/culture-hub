@@ -19,8 +19,7 @@ class DatabaseService {
           email: docData.email,
           lastLoginDate: docData.lastLoginDate,
           avatar: docData.avatar,
-          twitterTokenSecret: docData.twitterTokenSecret,
-          twitterAccessToken: docData.twitterAccessToken,
+          integrations: docData.integrations,
         };
       }
     }
@@ -30,26 +29,18 @@ class DatabaseService {
   async createUser(uid: string, email: string, displayName: string, avatar: string, twitterAccessToken: string, twitterTokenSecret: string) {
     const user: User = {
       displayName: displayName,
-      email: email,
+      email: email ?? '',
       lastLoginDate: new Date(),
       avatar: avatar,
-      twitterTokenSecret: twitterTokenSecret,
-      twitterAccessToken: twitterAccessToken,
+      integrations: {
+        twitter: {
+          enabled: true,
+          accessToken: twitterAccessToken,
+          tokenSecret: twitterTokenSecret,
+        }
+      }
     };
     return this.userCollection.doc(uid).set(user);
-  }
-
-  async updateUser(user: UserModel): Promise<void> {
-    const userRef = await this.userCollection.doc(user.uid);
-    userRef.update({
-      ...user,
-      displayName: user.displayName,
-      email: user.email,
-      lastLoginDate: user.lastLoginDate,
-      avatar: user.avatar,
-      twitterTokenSecret: user.twitterTokenSecret,
-      twitterAccessToken: user.twitterAccessToken,
-    });
   }
 
   async getYearUserLogEntries(userId: string, year: number): Promise<LogEntryModel[]> {

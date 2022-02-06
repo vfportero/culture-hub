@@ -1,12 +1,14 @@
 <template>
   <ion-card>
     <template v-if="logEntry">      
-      <ion-slides pager v-if="logEntry.images.length > 1">
-        <ion-slide v-for="image in logEntry.images" :key="image">
-          <ion-img :src="image" :alt="logEntry.name"></ion-img>
-        </ion-slide>
-      </ion-slides>
-      <ion-img v-else :src="logEntry.images[0]" :alt="logEntry.name"></ion-img>
+      <template v-if="logEntry.images">
+        <ion-slides pager v-if="logEntry.images.length > 1">
+          <ion-slide v-for="image in logEntry.images" :key="image">
+            <ion-img :src="image" :alt="logEntry.name"></ion-img>
+          </ion-slide>
+        </ion-slides>
+        <ion-img v-else :src="logEntry.images[0]" :alt="logEntry.name"></ion-img>
+      </template>
       <ion-card-header>
         <ion-card-subtitle>{{getEntryDate(logEntry)}}</ion-card-subtitle>
         <ion-card-title>

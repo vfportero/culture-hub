@@ -45,11 +45,13 @@ class UserStore extends VuexModule {
             twitterCredentials['oauthTokenSecret'],
           );
         }
-
-        this.userLogged(authResult.user.uid);
+        else {
+          this.userLogged(authResult.user.uid);
+        }
 
         return true;
       }
+      return false;
     }
     catch (error) {
       return error.toString();
@@ -59,9 +61,11 @@ class UserStore extends VuexModule {
   @Action
   async userLogged(userId: string) {
     const user = await DatabaseService.getUser(userId);
-    user.lastLoginDate = new Date();
-    this.setUser(user);
-    UserLogEntriesStore.fetchCurrentYearUserLogEntries();
+    if (user) {
+      user.lastLoginDate = new Date();
+      this.setUser(user);
+      UserLogEntriesStore.fetchCurrentYearUserLogEntries();
+    }
   }
 
   @Action

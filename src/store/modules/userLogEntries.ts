@@ -59,28 +59,30 @@ class UserLogEntriesStore extends VuexModule {
   }
 
   @Action
-  async tweetUserLogEntry(logEntry: LogEntryModel) : Promise<string> {
-    let lastTweetId: string;
-    for (const logEntry of this.currentYearLogEntries) {
-      if (logEntry.tweetId) {
-        lastTweetId = logEntry.tweetId;
-        break;
+  async tweetUserLogEntry(logEntry: LogEntryModel): Promise<string> {
+    if (UserStore.user?.integrations?.twitter?.enabled) {
+      let lastTweetId: string;
+      for (const logEntry of this.currentYearLogEntries) {
+        if (logEntry.tweetId) {
+          lastTweetId = logEntry.tweetId;
+          break;
+        }
       }
-    }
 
-    if (lastTweetId) {
-      this.setLoadingStatus(UserLogEntriesLoadingStatus.publishingTweet);
+      if (lastTweetId) {
+        this.setLoadingStatus(UserLogEntriesLoadingStatus.publishingTweet);
 
-      const tweetId = await TwitterService.notifyLogEntry(this.currentYearLogEntries.length, lastTweetId, logEntry, UserStore.user.twitterAccessToken, UserStore.user.twitterTokenSecret);
+        const tweetId = await TwitterService.notifyLogEntry(this.currentYearLogEntries.length, lastTweetId, logEntry, UserStore.user.integrations.twitter.accessToken, UserStore.user.integrations.twitter.tokenSecret);
 
-      this.setLoadingStatus(UserLogEntriesLoadingStatus.communicatingWithServer);
+        this.setLoadingStatus(UserLogEntriesLoadingStatus.communicatingWithServer);
 
-      await databaseService.updateUserLogEntry(UserStore.user.uid, logEntry.uid, { tweetId });
-      this.setUserLogEntryTweetId(logEntry.uid, tweetId);
+        await databaseService.updateUserLogEntry(UserStore.user.uid, logEntry.uid, { tweetId });
+        this.setUserLogEntryTweetId(logEntry.uid, tweetId);
 
-      this.setLoadingStatus(UserLogEntriesLoadingStatus.idle);
+        this.setLoadingStatus(UserLogEntriesLoadingStatus.idle);
 
-      return tweetId;
+        return tweetId;
+      }
     }
 
     return null;

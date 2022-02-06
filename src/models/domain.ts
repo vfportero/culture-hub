@@ -4,9 +4,16 @@ export interface User {
   displayName: string;
   email?: string;
   avatar: string;
-  twitterAccessToken: string;
-  twitterTokenSecret: string;
+  integrations: UserIntegrations;
   lastLoginDate: Date;
+}
+
+export interface UserIntegrations {
+  twitter: {
+    enabled: boolean;
+    accessToken: string;
+    tokenSecret: string;
+  } 
 }
 
 export interface LogEntry {
