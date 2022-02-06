@@ -32,3 +32,4 @@ npm-debug.log*
 
 /_OLD
 /.env.local
+/.firebase/**
