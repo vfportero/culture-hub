@@ -33,6 +33,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'login',
     path: '/login',
     component: () => import('@/views/Login.vue'),
+    beforeEnter: authCheck,
   },
   {
     path: "/",
