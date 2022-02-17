@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import { LogEntryModel, LogEntryType } from '@/models';
+import { LogEntryModel, LogEntryType, Platform } from '@/models';
 import userLogEntries from '@/store/modules/userLogEntries';
 import userStore from '@/store/modules/user';
 import twitterService from '@/services/twitter';
@@ -97,6 +97,9 @@ export default defineComponent({
     const showPlatformInfo = computed(() => {
       switch (props.logEntry.type) {
         case LogEntryType.Movie:
+          {
+            return props.logEntry.platform !== Platform.Theaters && props.logEntry.platform !== Platform.Tv;
+          }
         case LogEntryType.TvShow:
         case LogEntryType.VideoGame:
         case LogEntryType.Album:
