@@ -21,7 +21,7 @@
     "@capacitor/status-bar": "1.0.6",
     "@ionic/vue": "^6.0.0",
     "@ionic/vue-router": "^6.0.0",
-    "axios": "^0.24.0",
+    "axios": "^1.15.0",
     "compressorjs": "^1.1.1",
     "core-js": "^3.6.5",
     "firebase": "^7.14.2",
